@@ -9,11 +9,13 @@
     if($aksi == "table_master"){
         table_master($path);
     }
-    else if($aksi == "insert_handler" || $aksi == "edit_handler"){
+    else if($aksi == "insert_handler"){
         insert_handler($data,$aksi,$path);
     }
+    else if($aksi == "detail_handler"){
+        detail_handler($data,$aksi,$path);
+    }
     
-     
 
     function table_master($path){
         ?>
@@ -53,7 +55,7 @@
                             },
                             {  "data": "aksi", className: 'text-nowrap', "render": function (data, type, row, meta) {
                                     var id = row.t_income_goods_entry_code;
-                                    var edit = "<button type='button' class='btn btn-primary btn-sm' onclick=\"edit_display('" + id + "')\"><i class='fa fa-list'></i> </button> ";
+                                    var edit = "<button type='button' class='btn btn-primary btn-sm' onclick=\"detail_display('" + id + "')\"><i class='fa fa-list'></i> </button> ";
                                     return edit;
                                 }
                             },
@@ -101,12 +103,6 @@
     function insert_handler($data,$aksi,$path){
         $count = count($data['data']);
         $item = $count==0?"":$data['data'][0];
-
-        $m_warehouse_id = $count==0?"":$item['m_warehouse_id'];
-        $m_warehouse_name = $count==0?"":$item['m_warehouse_name'];
-        $m_warehouse_telp = $count==0?"":$item['m_warehouse_telp'];
-        $m_warehouse_status = $count==0?"Active":$item['m_warehouse_status'];
-        $read_only = false;
 
         $list_m_product = count($data['list_m_product']);
         $list_m_product = $list_m_product==0?"":$data['list_m_product'];
@@ -208,39 +204,44 @@
             }
 
             function summery_model(){
-                var unique = ArrInputTransaction.filter(onlyUnique);
+                if(ArrInputTransaction.length==0){
+                    msg_warning("Sorry, cant save this transaction. Please input 1 row transaction")
+                }
+                else{
+                    var unique = ArrInputTransaction.filter(onlyUnique);
 
-                var ArrSummary = [];
-                var ArrId = ArrInputTransaction.map(object => {
-                    return object.m_product_id;
-                });
+                    var ArrSummary = [];
+                    var ArrId = ArrInputTransaction.map(object => {
+                        return object.m_product_id;
+                    });
 
-                var uniqueSites = ArrId.filter(function(item, i, sites) {
-                    return i == ArrId.indexOf(item);
-                });
-
-
-                $.each(uniqueSites, function(index, value) {
-                  
-                  var ArrNameFiletById = ArrInputTransaction.filter(object => {
-                        return object.m_product_id==value;
-                  });
-
-                  var ArrFiletById = ArrInputTransaction.filter(object => {
-                        return object.m_product_id==value;
-                  });
+                    var uniqueSites = ArrId.filter(function(item, i, sites) {
+                        return i == ArrId.indexOf(item);
+                    });
 
 
-                  ArrSummary.push({
-                    "m_product_name":ArrNameFiletById[0].m_product_name,
-                    "total":ArrFiletById.length,
-                  })
-                });
+                    $.each(uniqueSites, function(index, value) {
+                      
+                      var ArrNameFiletById = ArrInputTransaction.filter(object => {
+                            return object.m_product_id==value;
+                      });
 
-                TableSummary.clear().draw();
+                      var ArrFiletById = ArrInputTransaction.filter(object => {
+                            return object.m_product_id==value;
+                      });
 
-                TableSummary.rows.add(ArrSummary).draw();
-                $('#ModalSave').modal('show'); 
+
+                      ArrSummary.push({
+                        "m_product_name":ArrNameFiletById[0].m_product_name,
+                        "total":ArrFiletById.length,
+                      })
+                    });
+
+                    TableSummary.clear().draw();
+
+                    TableSummary.rows.add(ArrSummary).draw();
+                    $('#ModalSave').modal('show'); 
+                }
             }
 
             function onlyUnique(value, index, self) {
@@ -392,6 +393,152 @@
                 $('#imei').val('');
                 $('#note').val('');
             }
+        </script>
+        <?php
+    }
+
+    function detail_handler($data,$aksi,$path){
+        $count = count($data['data']);
+        $item = $count==0?"":$data['data'][0];
+        $id = $data['id'];
+
+        if($count>0){
+            $m_warehouse_status = $m_warehouse_status=="Active"?true:false;
+            $read_only = $m_warehouse_status==true?false:true;
+        }
+        
+        $input_kiri =  
+            get_group_input_full("date","Date","text",50,true,$data['create_at'],true)
+        ;
+
+        $input_kanan =  
+            get_single_input("data_imei","Email","hidden",true)
+        ;
+        ?>
+
+        <div class='form-group row'>
+            <div class='col-lg-6 col-md-6'><?php echo $input_kiri ?></div>
+            <div class='col-lg-6 col-md-6'><?php echo $input_kanan ?></div>
+        </div>
+
+        <hr>
+
+        <form id="table_input_pengeluaran">
+             <table id="master_table" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="all">No</th>
+                        <th class="all">Product</th>
+                        <th>Imei</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </form>
+
+        <div class="modal fade bd-example-modal-lg" id="ModalSave" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Summary Income Goods Entry</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <table id="Summary_table" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="all">No</th>
+                            <th class="all">Product</th>
+                            <th class="all">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="send_insert_data()">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+       
+
+        <script type="text/javascript">
+            var TableTransaction = $("#master_table").DataTable({
+                language: {
+                    "infoFiltered": " (filtered from _MAX_ total entries)"
+                },
+                stateSave: true,
+                columns: [
+                    { visible: true,
+                        "data": "m_product_name", "render": function (data, type, row, meta) {
+                            no = meta.row + meta.settings._iDisplayStart + 1;
+                            return no;
+                        }
+                    },
+                    {   orderable: false,
+                        targets: "no-sort",
+                        "data": "m_product_name", "render": function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    { 
+                        orderable: false,
+                        targets: "no-sort",
+                        "data": "t_imei_number", "render": function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                    { 
+                        orderable: false,
+                        targets: "no-sort",
+                        "data": "note", "render": function (data, type, row, meta) {
+                            return data;
+                        }
+                    },
+                ],
+                processing: true,
+                serverSide: true,
+                
+                ajax: function (data, callback, settings) {
+                    var order = data.order;
+                    var sort = [{}];
+                    order.forEach(function(item) {
+                        sort.push([data.columns[item.column].data + " " +item.dir])
+                    });
+
+                    var data_new = {}
+                    data_new.start = data.start;
+                    data_new.length = data.length;
+                    data_new.search = data.search["value"];
+                    data_new.sort = sort;
+                    data_new.id = "<?php echo $id ?>";
+                    var path = "<?php echo $path.'/data_table_detail'?>"
+
+                    $.ajax({
+                        type  : 'POST',
+                        url   : path,
+                        dataType : 'json',
+                        data: data_new,
+                        success : function(result){
+                            callback({
+                                draw: data.draw,
+                                data: result.data,
+                                recordsTotal: result.row_total,
+                                recordsFiltered: result.row_filter,
+                            });
+                        }
+                    }).fail(function (xhr, status, error) {
+                        msg_warning("process failed","")
+                    })
+                },
+            }); //invoke dataTable here, put custom options here
         </script>
         <?php
     }

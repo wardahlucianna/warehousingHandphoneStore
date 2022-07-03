@@ -95,6 +95,31 @@
                         </form>
                     </div>
 
+                    <div class="card-box" id="detail_area">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+                        <div class="form-group row">
+                            <h4 class="col-lg-10 col-md-9"><span id="edit_area_title">Detail Data</span> <?php echo $form_title ?></h4>
+                            <div class='col-lg-2 col-md-3'></div>    
+                        </div>
+                        <hr>
+
+                        <form role="form" id="detail_area_form">
+                            <div id = "detail_area_content">
+                            </div>
+                            <hr>
+                            <div class="form-group text-right">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="table_display()" id="btn_edit_cancel">
+                                        <i class="fa fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="card-box" id="report_filter_area">
                         <div class="col-md-6">
                         </div>
@@ -177,6 +202,7 @@
         $("#edit_area").css("display", "none");
         $("#report_filter_area").css("display", "none");
         $("#report_area").css("display", "none");
+        $("#detail_area").css("display", "none");
         
         $('#table_area_content').load("<?php echo $path; ?>"+"/template?aksi=table_master&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>");
     }
@@ -188,6 +214,7 @@
         $("#edit_area").css("display", "none");
         $("#report_filter_area").css("display", "none");
         $("#report_area").css("display", "none");
+        $("#detail_area").css("display", "none");
 
         $('#insert_area_content').load("<?php echo $path; ?>"+"/template?aksi=insert_handler&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>");
     }
@@ -199,6 +226,7 @@
         $("#insert_area").css("display", "none");
         $("#report_filter_area").css("display", "none");
         $("#report_area").css("display", "none");
+        $("#detail_area").css("display", "none");
 
         $('#edit_area_content').load("<?php echo $path; ?>"+"/template?aksi=edit_handler&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>&id="+id);
     }
@@ -210,6 +238,7 @@
         $("#insert_area").css("display", "none");
         $("#edit_area").css("display", "none");
         $("#report_area").css("display", "none");
+        $("#detail_area").css("display", "none");
 
         $('#report_filter_area_content').load("<?php echo $path; ?>"+"/template?aksi=filter_report&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>");
 
@@ -222,9 +251,22 @@
         $("#insert_area").css("display", "none");
         $("#edit_area").css("display", "none");
         $("#report_filter_area").css("display", "none");
+        $("#detail_area").css("display", "none");
 
         var form_data = $('#report_filter_area_form').serialize();
         $('#report_area_content').load("<?php echo $path; ?>"+"/template?aksi=report&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>",form_data);
+    }
+
+    function detail_display(id) {
+        reset_form()
+        $("#edit_area").css("display", "none");
+        $("#table_area").css("display", "none");
+        $("#insert_area").css("display", "none");
+        $("#report_filter_area").css("display", "none");
+        $("#report_area").css("display", "none");
+        $("#detail_area").css("display", "block");
+
+        $('#detail_area_content').load("<?php echo $path; ?>"+"/template?aksi=detail_handler&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>&id="+id);
     }
 
     function scan_display(code) {
