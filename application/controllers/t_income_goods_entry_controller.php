@@ -13,7 +13,6 @@ class t_income_goods_entry_controller extends CI_Controller {
 
 	public function index()
 	{
-
 		$data['hak_akses'] 	= $this->m_menu->hak_akses();
 		$base_url = base_url();
 		$current_url = current_url();
@@ -76,8 +75,9 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$length	= $this->input->post('length');
 		$search	= $this->input->post('search');
 		$sort = $this->input->post('sort');
+		$date = $this->input->post('date');
 
-		$result['row_total']	= $this->db->count_all_results('m_warehouse');
+		$result['row_total']	= $this->db->count_all_results('t_income_goods_entry');
 		$result['row_filter'] 	= $result['row_total'];
 
 		$this->db->distinct();
@@ -87,6 +87,7 @@ class t_income_goods_entry_controller extends CI_Controller {
 				'DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at,
 				a.t_income_goods_entry_code,
 				b.m_employee_full_name');
+		$this->db->where('DATE_FORMAT(a.create_at, "%d %M %Y")=',$date);
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {
@@ -94,14 +95,18 @@ class t_income_goods_entry_controller extends CI_Controller {
 		}
 
 		if($search!=null || $search!=""){
-			$this->db->like('m_employee_full_name', $search);
-			$this->db->or_like('a.create_at', $search);
+			$this->db->where("(m_employee_full_name LIKE '%".$search."%' ESCAPE '!' 
+							or DATE_FORMAT(a.create_at, '%d %M %Y %h:%i %p') LIKE '%".$search."%' ESCAPE '!')");
+			// $this->db->or_like('DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p")', $search);
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);
 		}
 		else{
 			$result['data'] = $this->db->get()->result();
+			$result['row_total']	= count($result['data']);
+			$result['row_filter'] 	= $result['row_total'];
 		}
+
 
 		$result['status'] = "";
 		echo json_encode($result);
@@ -115,8 +120,19 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$sort = $this->input->post('sort');
 		$id = $this->input->post('id');
 
-		$result['row_total']	= $this->db->count_all_results('m_warehouse');
-		$result['row_filter'] 	= $result['row_total'];
+		$this->db->distinct();
+		$this->db->from('t_income_goods_entry a');
+		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
+		$this->db->join('m_product c','b.m_product_id=c.m_product_id');
+		$this->db->where('t_income_goods_entry_code',$id);
+		$this->db->select(
+				'a.t_income_goods_entry_id,
+				c.m_product_name,
+				b.t_imei_number,
+				b.note');
+
+		$result['row_total'] = count($this->db->get()->result());
+		$result['row_filter'] = $result['row_total'];
 
 		$this->db->distinct();
 		$this->db->from('t_income_goods_entry a');
@@ -135,10 +151,12 @@ class t_income_goods_entry_controller extends CI_Controller {
 		}
 
 		if($search!=null || $search!=""){
-			// $this->db->like('m_employee_full_name', $search);
-			// $this->db->or_like('a.create_at', $search);
-			// $result['data'] = $this->db->get()->result();
-			// $result['row_filter'] = count($result['data']);
+			$this->db->where("(m_product_name LIKE '%".$search."%' ESCAPE '!' 
+							or b.t_imei_number LIKE '%".$search."%' ESCAPE '!'
+						or b.note LIKE '%".$search."%' ESCAPE '!')");
+
+			$result['data'] = $this->db->get()->result();
+			$result['row_filter'] = count($result['data']);
 		}
 		else{
 			$result['data'] = $this->db->get()->result();
@@ -190,9 +208,9 @@ class t_income_goods_entry_controller extends CI_Controller {
 				"t_imei_id"=>$last_id_imei,
 				"create_at"=>date("Y-m-d H:i:s"),
 				"create_by"=>$_SESSION['employee_code'],
-				"t_imei_id_status"=>"Income warehose ". $get_warehouse->m_warehouse_name,
+				"hs_imei_status"=>"Income warehouse ". $get_warehouse->m_warehouse_name,
 			);
-			$this->db->insert('hs_imei1', $data_history);
+			$this->db->insert('hs_imei', $data_history);
 
 
 			$this->db->from('t_stock');
@@ -213,10 +231,8 @@ class t_income_goods_entry_controller extends CI_Controller {
 			else{
 				$data_entry = array(
 					"t_stock_total"=>$get->t_stock_total+1,
-					"m_product_id"=>$m_product_id,
-					"create_at"=>date("Y-m-d H:i:s"),
-					"create_by"=>$_SESSION['employee_code'],
-					"m_warehouse_id"=>$_SESSION['m_warehouse_id'],
+					"update_at"=>date("Y-m-d H:i:s"),
+					"update_by"=>$_SESSION['employee_code'],
 				);
 
 				$this->db->set($data_entry);
@@ -250,6 +266,64 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$this->db->from('t_imei');
 		$result['data'] = $this->db->get()->row();
 
+		echo json_encode($result);
+	}
+
+	public function delete(){
+		$id 		= $this->input->get('id');
+		$count 		= 0;
+
+		$this->db->trans_start(); // Query will be rolled back
+		$this->db->trans_begin();
+
+		$this->db->where("t_income_goods_entry_id",$id);
+		$this->db->from('t_income_goods_entry a');
+		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
+		$t_income_goods_entry_by_id = $this->db->get()->row();
+
+		$this->db->where('t_imei_id', $t_income_goods_entry_by_id->t_imei_id);
+		$data = $this->db->delete('hs_imei');
+
+		$this->db->where('t_income_goods_entry_id', $id);
+		$data = $this->db->delete('t_income_goods_entry');
+
+		$this->db->where('t_imei_id', $t_income_goods_entry_by_id->t_imei_id);
+		$data = $this->db->delete('t_imei');
+
+		$this->db->from('t_stock');
+		$this->db->where('m_product_id',$t_income_goods_entry_by_id->m_product_id);
+		$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
+		$get= $this->db->get()->row();
+
+		if($get!=null){
+			$data_entry = array(
+				"t_stock_total"=>$get->t_stock_total-1,
+				"update_at"=>date("Y-m-d H:i:s"),
+				"update_by"=>$_SESSION['employee_code'],
+			);
+
+			$this->db->set($data_entry);
+			$this->db->where("t_stock_id",$get->t_stock_id);
+			$this->db->update('t_stock');
+		}
+
+
+		$status 	= "delete";
+		$msg 	= "Delete success";
+
+		if ($this->db->trans_status() === FALSE){
+		    $this->db->trans_rollback();
+		    $status = "failed";
+		    $msg = "Process failed";
+		}
+		else{
+		    $this->db->trans_commit();
+		}
+
+		$result['msg']=$msg;
+		$result['status']=$status;
+
+		$this->db->trans_complete();
 		echo json_encode($result);
 	}
 }

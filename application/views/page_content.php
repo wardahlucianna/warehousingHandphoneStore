@@ -296,7 +296,6 @@
 
     function send_insert_data(){
         invalid = form_validation("insert_area_form");
-
         if(invalid==false){
             $('body').loading({theme: 'dark'});
             var form = $('#insert_area_form').get(0);

@@ -18,8 +18,17 @@
     
 
     function table_master($path){
+        $input_kiri =  
+            get_group_input_full("date","Date","text",50,true,"")
+        ;
         ?>
 
+        <div class='form-group row'>
+            <div class='col-lg-6 col-md-6'><?php echo $input_kiri ?></div>
+            <div class='col-lg-6 col-md-6'></div>
+        </div>
+
+        <hr>
             <table id="master_table" class="table table-striped table-bordered dt-responsive" style="width:100%">
                 <thead>
                     <tr>
@@ -33,8 +42,19 @@
             </table>
 
             <script type="text/javascript">
+
                 $(document).ready(function(){
-                    $("#master_table").dataTable({
+                    $('#date').datetimepicker({
+                        format: 'L',
+                        defaultDate: new Date(),
+                        format: 'DD MMMM YYYY'
+                     });
+
+                    $("#date").on('dp.change',function(e) {
+                        $('#master_table').DataTable().ajax.reload()
+                    });
+
+                    master_table = $("#master_table").dataTable({
                         language: {
                             "infoFiltered": " (filtered from _MAX_ total entries)"
                         },
@@ -75,6 +95,7 @@
                             data_new.length = data.length;
                             data_new.search = data.search["value"];
                             data_new.sort = sort;
+                            data_new.date = $("#date").val();
                             var path = "<?php echo $path.'/data_table'?>"
 
                             $.ajax({
@@ -364,10 +385,17 @@
                             msg_warning("Sorry, Imei "+ObjInputTransaction.imei+" already exsis in this entry");                            
                         }
                         else{
-                            ArrInputTransaction.push(ObjInputTransaction)
-                            TableTransaction.row.add(ObjInputTransaction).draw();
+                            if(ArrInputTransaction.length<50){
+                                ArrInputTransaction.push(ObjInputTransaction)
+                                TableTransaction.row.add(ObjInputTransaction).draw();
+                                
+                            }
+                            else{
+                                msg_warning("Sorry, rows are full. please save than create new transaction");
+                            }
+
+                            $("#data_imei").val(JSON.stringify(ArrInputTransaction));
                         }
-                        $("#data_imei").val(JSON.stringify(ArrInputTransaction));
 
                     }).fail(function (xhr, status, error) {
                         msg_warning("process failed","")
@@ -431,6 +459,7 @@
                         <th class="all">Product</th>
                         <th>Imei</th>
                         <th>Note</th>
+                        <th class="all">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -482,24 +511,27 @@
                             return no;
                         }
                     },
-                    {   orderable: false,
-                        targets: "no-sort",
+                    {   targets: "no-sort",
                         "data": "m_product_name", "render": function (data, type, row, meta) {
                             return data;
                         }
                     },
                     { 
-                        orderable: false,
                         targets: "no-sort",
                         "data": "t_imei_number", "render": function (data, type, row, meta) {
                             return data;
                         }
                     },
                     { 
-                        orderable: false,
                         targets: "no-sort",
                         "data": "note", "render": function (data, type, row, meta) {
                             return data;
+                        }
+                    },
+                    {  "data": "aksi", className: 'text-nowrap', "render": function (data, type, row, meta) {
+                            var id = row.t_income_goods_entry_id;
+                            var edit = "<button type='button' class='btn btn-danger btn-sm' onclick=\"send_delete_data('" + id + "')\"><i class='fa fa-trash'></i> </button> ";
+                            return edit;
                         }
                     },
                 ],
@@ -543,3 +575,6 @@
         <?php
     }
 ?>
+
+
+

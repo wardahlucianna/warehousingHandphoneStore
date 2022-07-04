@@ -47,3 +47,8 @@
 <!-- bootstrap-tagsinput -->
 <link rel='stylesheet' href="<?php echo base_url().'assets/vendor/bootstrap-tagsinput/css/bootstrap-tagsinput.css'?>">
 <script src="<?php echo base_url().'assets/vendor/bootstrap-tagsinput/js/bootstrap-filestyle.min.js'?>"></script>
+
+<!-- <link rel="stylesheet" type="text/css" media="screen" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/> -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
