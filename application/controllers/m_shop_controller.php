@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class m_product_controller extends CI_Controller {
+class m_shop_controller extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->helper(array("html","form","url","text"));
@@ -42,32 +42,11 @@ class m_product_controller extends CI_Controller {
 
 		if($aksi == 'insert_handler' || $aksi == 'edit_handler'){
 			$id = $this->input->get('id');
-			$this->db->from('m_product');
-			$this->db->where('m_product_id',$id);
+			$this->db->from('m_shop');
+			$this->db->where('m_shop_id',$id);
 			$get= $this->db->get();
 			$count= $get->num_rows();
 			$data['data']['data']= $get->result();
-
-			$this->db->from('m_color');
-			$this->db->where('m_color_status', 'Active');
-			$this->db->select('m_color_id, m_color_name');
-			$this->db->order_by('m_color_name');
-			$get1= $this->db->get();
-			$data['data']['list_m_color']= $get1->result();
-
-			$this->db->from('m_product_type');
-			$this->db->where('m_product_type_status', 'Active');
-			$this->db->select('m_product_type_id, m_product_type_name');
-			$this->db->order_by('m_product_type_name');
-			$get3= $this->db->get();
-			$data['data']['list_m_product_type']= $get3->result();
-
-			$this->db->from('m_size');
-			$this->db->where('m_size_status', 'Active');
-			$this->db->select('m_size_id, m_size_name');
-			$this->db->order_by('m_size_name');
-			$get2= $this->db->get();
-			$data['data']['list_m_size']= $get2->result();
 		}
 		$result['data'] = json_encode($data);
 		$this->load->view($group_title.'/'.$file_title,$result);
@@ -81,21 +60,10 @@ class m_product_controller extends CI_Controller {
 		$search	= $this->input->post('search');
 		$sort = $this->input->post('sort');
 
-		$result['row_total']	= $this->db->count_all_results('m_product');
+		$result['row_total']	= $this->db->count_all_results('m_shop');
 		$result['row_filter'] 	= $result['row_total'];
 
-		$this->db->from('m_product a');
-		$this->db->join('m_product_type b','a.m_product_type_id=b.m_product_type_id');
-		$this->db->join('m_size c','a.m_size_id=c.m_size_id');
-		$this->db->join('m_color d','a.m_color_id=d.m_color_id');
-		$this->db->select(
-				'a.m_product_id,
-				a.m_product_name,
-				d.m_color_name,
-				c.m_size_name,
-				b.m_product_type_name,
-				a.m_product_limit,
-				a.m_product_status');
+		$this->db->from('m_shop');
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {
@@ -103,11 +71,8 @@ class m_product_controller extends CI_Controller {
 		}
 
 		if($search!=null || $search!=""){
-			$this->db->like('m_product_name', $search);
-			$this->db->or_like('m_color_name', $search);
-			$this->db->or_like('m_size_name', $search);
-			$this->db->or_like('m_product_status', $search);
-			$this->db->or_like('m_product_limit', $search);
+			$this->db->like('m_shop_name', $search);
+			$this->db->or_like('m_shop_status', $search);
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);
 		}
@@ -121,43 +86,47 @@ class m_product_controller extends CI_Controller {
 
 	public function save()
 	{
-		$code	= $this->input->post('m_product_id');
-		$m_product_name	= $this->input->post('m_product_name');
-		$m_product_type_id	= $this->input->post('m_product_type_id_area');
-		$m_product_limit	= $this->input->post('m_product_limit');
-		$m_size_id	= $this->input->post('m_size_id_area');
-		$m_color_id	= $this->input->post('m_color_id_area');
-		$m_product_status	= $this->input->post('m_product_status');
-		$m_product_status	= $m_product_status==true?"Active":"Not Active";
+		$code	= $this->input->post('m_shop_id');
+		$m_shop_name	= $this->input->post('m_shop_name');
+		$m_shop_telp	= $this->input->post('m_shop_telp');
+		$m_shop_status	= $this->input->post('m_shop_status');
+		$m_shop_status	= $m_shop_status==true?"Active":"Not Active";
 
 		$this->db->trans_start(); // Query will be rolled back
 		$this->db->trans_begin();
 		
 		$data = array(
-			"m_product_id"=>$code,
-			"m_product_name"=>$m_product_name,
-			"m_product_status"=>$m_product_status,
-			"m_product_type_id"=>$m_product_type_id,
-			"m_product_limit"=>$m_product_limit,
-			"m_size_id"=>$m_size_id,
-			"m_color_id"=>$m_color_id,
+			"m_shop_id"=>$code,
+			"m_shop_name"=>$m_shop_name,
+			"m_shop_telp"=>$m_shop_telp,
+			"m_shop_status"=>$m_shop_status,
 		);
 
 		//kode
 		$count_name = 0;
+		$count_telp = 0;
 		if($code==""){
-			$this->db->where("m_product_name",$m_product_name);
-			$this->db->from('m_product');
+			$this->db->where("m_shop_name",$m_shop_name);
+			$this->db->from('m_shop');
 			$count_name += $this->db->get()->num_rows();
+
+			$this->db->where("m_shop_telp",$m_shop_name);
+			$this->db->from('m_shop');
+			$count_telp += $this->db->get()->num_rows();
 
 			$data['create_by'] = $_SESSION['employee_code'];
 			$data['create_at'] = date("Y-m-d H:i:s");
 		}
 		else{
-			$this->db->where("m_product_name",$m_product_name);
-			$this->db->where("m_product_id!=",$code);
-			$this->db->from('m_product');
+			$this->db->where("m_shop_name",$m_shop_name);
+			$this->db->where("m_shop_id!=",$code);
+			$this->db->from('m_shop');
 			$count_name += $this->db->get()->num_rows();
+
+			$this->db->where("m_shop_telp",$m_shop_name);
+			$this->db->where("m_shop_id!=",$code);
+			$this->db->from('m_shop');
+			$count_telp += $this->db->get()->num_rows();
 
 			$data['update_by'] = $_SESSION['employee_code'];
 			$data['update_at'] = date("Y-m-d H:i:s");
@@ -165,18 +134,21 @@ class m_product_controller extends CI_Controller {
 
 		$status = "same";
 		if($count_name>0){
-			$msg = "Data already";
+			$msg = "Name already";
+		}
+		else if($count_telp>0){
+			$msg = "Telephone already";
 		}
 		else{
 			$status = "succsess";
 			if($code==""){
-				$this->db->insert('m_product', $data);
+				$this->db->insert('m_shop', $data);
 				$msg = "Save success";
 			}
 			else{
 				$this->db->set($data);
-				$this->db->where("m_product_id",$code);
-				$this->db->update('m_product');
+				$this->db->where("m_shop_id",$code);
+				$this->db->update('m_shop');
 				$msg = "Update success";
 			}
 		}
@@ -204,12 +176,8 @@ class m_product_controller extends CI_Controller {
 		$this->db->trans_start(); // Query will be rolled back
 		$this->db->trans_begin();
 
-		$this->db->where("m_product_id",$id);
-		$this->db->from('t_imei');
-		$count 	+= $this->db->count_all_results();
-
-		$this->db->where("m_product_id",$id);
-		$this->db->from('t_stock');
+		$this->db->where("m_shop_id",$id);
+		$this->db->from('t_outcome_goods_entry');
 		$count 	+= $this->db->count_all_results();
 		
 		if($count>0){
@@ -219,8 +187,8 @@ class m_product_controller extends CI_Controller {
 		else{
 			$status 	= "delete";
 			$msg 	= "Delete success";
-			$this->db->where('m_product_id', $id);
-			$data = $this->db->delete('m_product');
+			$this->db->where('m_shop_id', $id);
+			$data = $this->db->delete('m_shop');
 		}
 
 		if ($this->db->trans_status() === FALSE){

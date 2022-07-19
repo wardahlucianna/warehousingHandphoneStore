@@ -9,6 +9,9 @@
     if($aksi == "table_master"){
         table_master($path);
     }
+    else if($aksi == "insert_handler" || $aksi == "edit_handler"){
+        insert_handler($data,$aksi);
+    }
     
 
     function table_master($path){
@@ -17,40 +20,45 @@
                 <thead>
                     <tr>
                         <th class="all">No</th>
-                        <th class="all">Imei</th>
-                        <th class="all">Product</th>
+                        <th class="all">Name</th>
+                        <th class="all">Telephone</th>
                         <th>Status</th>
+                        <th class="all">Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
 
             <script type="text/javascript">
-                $('#btn_add').hide();
                 $(document).ready(function(){
                     $("#master_table").dataTable({
                         language: {
                             "infoFiltered": " (filtered from _MAX_ total entries)"
                         },
-                        order: [[1, 'desc']],
+                        stateSave: true,
                         columns: [
-                            { 
-                                orderable: false,
-                                "data": "t_imei_id", "render": function (data, type, row, meta) {
+                            { "data": "m_shop_id", "render": function (data, type, row, meta) {
                                     no = meta.row + meta.settings._iDisplayStart + 1;
                                     return no;
                                 }
                             },
-                            { "data": "t_imei_number", "render": function (data, type, row, meta) {
+                            { "data": "m_shop_name", "render": function (data, type, row, meta) {
                                     return data;
                                 }
                             },
-                            { "data": "m_product_name", "render": function (data, type, row, meta) {
+                            { "data": "m_shop_telp", "render": function (data, type, row, meta) {
                                     return data;
                                 }
                             },
-                            { "data": "t_imei_status", "render": function (data, type, row, meta) {
+                            { "data": "m_shop_status", "render": function (data, type, row, meta) {
                                     return data;
+                                }
+                            },
+                            {  "data": "aksi", className: 'text-nowrap', "render": function (data, type, row, meta) {
+                                    var id = row.m_shop_id;
+                                    var edit = "<button type='button' class='btn btn-primary btn-sm' onclick=\"edit_display('" + id + "')\"><i class='fa fa-edit'></i> </button> ";
+                                    var hapus = "<button type='button' class='btn btn-danger btn-sm' onclick=\"send_delete_data('" + id + "')\"><i class='fa fa-trash'></i> </button> ";
+                                    return edit + hapus;
                                 }
                             },
                         ],
@@ -92,5 +100,29 @@
                 });
             </script>
         <?php
+    }
+
+    function insert_handler($data,$aksi){
+        $count = count($data['data']);
+        $item = $count==0?"":$data['data'][0];
+
+        $m_shop_id = $count==0?"":$item['m_shop_id'];
+        $m_shop_name = $count==0?"":$item['m_shop_name'];
+        $m_shop_telp = $count==0?"":$item['m_shop_telp'];
+        $m_shop_status = $count==0?"Active":$item['m_shop_status'];
+        $read_only = false;
+        
+        if($count>0){
+            $m_shop_status = $m_shop_status=="Active"?true:false;
+            $read_only = $m_shop_status==true?false:true;
+        }
+        
+        $input =  
+            get_input("m_shop_id","Id","hidden",true,$m_shop_id)
+            .get_group_input("m_shop_name","Name","text",50,true,$m_shop_name,$read_only)
+            .get_group_input("m_shop_telp","Telephone","number",50,true,$m_shop_telp,$read_only)
+            .get_group_toggle("m_shop_status","Status",true,$m_shop_status,$read_only)
+            ;
+        echo $input;
     }
 ?>

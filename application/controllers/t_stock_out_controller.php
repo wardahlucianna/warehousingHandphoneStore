@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class t_income_goods_entry_controller extends CI_Controller {
+class t_stock_out_controller extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->helper(array("html","form","url","text"));
@@ -40,29 +40,22 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$data['path'] = str_replace("/template","",current_url());
 		
 		if($aksi == 'insert_handler'){
-			$id = $this->input->get('id');
-			$this->db->from('m_warehouse');
-			$this->db->where('m_warehouse_id',$id);
-			$get= $this->db->get();
-			$count= $get->num_rows();
-			$data['data']['data']= $get->result();
-
-			$this->db->from('m_product');
-			$this->db->where('m_product_status', 'Active');
-			$this->db->select('m_product_id, m_product_name');
-			$this->db->order_by('m_product_name');
+			$this->db->from('m_shop');
+			$this->db->where('m_shop_status', 'Active');
+			$this->db->select('m_shop_id, m_shop_name');
+			$this->db->order_by('m_shop_name');
 			$get1= $this->db->get();
-			$data['data']['list_m_product']= $get1->result();
+			$data['data']['list_m_shop']= $get1->result();
 		}
 		else if($aksi == 'detail_handler'){
 			$id = $this->input->get('id');
 			$data['data']['id']= $id;
 
-			$this->db->from('t_income_goods_entry');
-			$this->db->where('t_income_goods_entry_code',$id);
+			$this->db->from('t_outcome_goods_entry');
+			$this->db->where('t_outcome_goods_entry_code',$id);
 			$this->db->select('DATE_FORMAT(create_at, "%d %M %Y %h:%i %p") as create_at');
-			$get= $this->db->get()->row();
-			$data['data']['create_at']= $get->create_at;
+			$get2= $this->db->get()->row();
+			$data['data']['create_at']= $get2->create_at;
 		}
 		$result['data'] = json_encode($data);
 		$this->load->view($group_title.'/'.$file_title,$result);
@@ -77,17 +70,27 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$sort = $this->input->post('sort');
 		$date = $this->input->post('date');
 
-		$result['row_total']	= $this->db->count_all_results('t_income_goods_entry');
-		$result['row_filter'] 	= $result['row_total'];
-
 		$this->db->distinct();
-		$this->db->from('t_income_goods_entry a');
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('m_employee b','a.create_by=b.m_employee_id');
 		$this->db->select(
 				'DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at,
-				a.t_income_goods_entry_code,
+				a.t_outcome_goods_entry_code,
 				b.m_employee_full_name');
-		$this->db->where('DATE_FORMAT(a.create_at, "%d %M %Y")=',$date);
+		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
+		$result['row_total']	= count($this->db->get()->result());
+		$result['row_filter'] 	= $result['row_total'];
+
+		$this->db->distinct();
+		$this->db->from('t_outcome_goods_entry a');
+		$this->db->join('m_employee b','a.create_by=b.m_employee_id');
+		$this->db->select(
+				'DATE_FORMAT(a.create_at, "%M %Y %h:%i %p") as create_at,
+				a.t_outcome_goods_entry_code,
+				b.m_employee_full_name');
+		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {
@@ -96,15 +99,12 @@ class t_income_goods_entry_controller extends CI_Controller {
 
 		if($search!=null || $search!=""){
 			$this->db->where("(m_employee_full_name LIKE '%".$search."%' ESCAPE '!' 
-							or DATE_FORMAT(a.create_at, '%d %M %Y %h:%i %p') LIKE '%".$search."%' ESCAPE '!')");
-			// $this->db->or_like('DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p")', $search);
+							or DATE_FORMAT(a.create_at, '%M %Y %h:%i %p') LIKE '%".$search."%' ESCAPE '!')");
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);
 		}
 		else{
 			$result['data'] = $this->db->get()->result();
-			$result['row_total']	= count($result['data']);
-			$result['row_filter'] 	= $result['row_total'];
 		}
 
 
@@ -121,12 +121,12 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$id = $this->input->post('id');
 
 		$this->db->distinct();
-		$this->db->from('t_income_goods_entry a');
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
 		$this->db->join('m_product c','b.m_product_id=c.m_product_id');
-		$this->db->where('t_income_goods_entry_code',$id);
+		$this->db->where('t_outcome_goods_entry_code',$id);
 		$this->db->select(
-				'a.t_income_goods_entry_id,
+				'a.t_outcome_goods_entry_id,
 				c.m_product_name,
 				b.t_imei_number,
 				b.note');
@@ -135,12 +135,12 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$result['row_filter'] = $result['row_total'];
 
 		$this->db->distinct();
-		$this->db->from('t_income_goods_entry a');
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
 		$this->db->join('m_product c','b.m_product_id=c.m_product_id');
-		$this->db->where('t_income_goods_entry_code',$id);
+		$this->db->where('t_outcome_goods_entry_code',$id);
 		$this->db->select(
-				'a.t_income_goods_entry_id,
+				'a.t_outcome_goods_entry_id,
 				c.m_product_name,
 				b.t_imei_number,
 				b.note');
@@ -177,68 +177,66 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$uniqid = uniqid();
 		foreach($data_imei as $x => $val) {
 			$imei = $val->imei;
-			$m_product_id = $val->m_product_id;
-			$note = $val->note;
+			$m_shop_id = $val->m_shop_id;
 
+			$this->db->where("a.t_imei_number",$imei);
+			$this->db->from('t_imei a');
+			$data_imei_by_number = $this->db->get()->row();
+
+			$this->db->where("a.m_shop_id",$m_shop_id);
+			$this->db->from('m_shop a');
+			$data_shop = $this->db->get()->row();
+
+			//update imei
 			$data_imei = array(
-				"t_imei_number"=>$imei,
-				"t_imei_status"=>"Ready",
-				"m_product_id"=>$m_product_id,
-				"note"=>$note,
-				"create_at"=>date("Y-m-d H:i:s"),
-				"create_by"=>$_SESSION['employee_code'],
+				"t_imei_status"=>"Sold",
+				"update_at"=>date("Y-m-d H:i:s"),
+				"update_by"=>$_SESSION['employee_code'],
 			);
-			$this->db->insert('t_imei', $data_imei);
-			$last_id_imei = $this->db->insert_id();
 
+			$this->db->set($data_imei);
+			$this->db->where("t_imei_number",$imei);
+			$this->db->update('t_imei');
+
+			//update stock
+			$this->db->from('t_stock');
+			$this->db->where('m_product_id',$data_imei_by_number->m_product_id);
+			$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
+			$get= $this->db->get()->row();
+
+			$data_stock = array(
+				"t_stock_total"=>$get->t_stock_total-1,
+				"update_at"=>date("Y-m-d H:i:s"),
+				"update_by"=>$_SESSION['employee_code'],
+			);
+
+			$this->db->set($data_stock);
+			$this->db->where("t_stock_id",$get->t_stock_id);
+			$this->db->update('t_stock');
+
+			//create entry
 			$data_entry = array(
-				"t_income_goods_entry_code"=>$uniqid,
-				"t_imei_id"=>$last_id_imei,
+				"t_outcome_goods_entry_code"=>$uniqid,
+				"t_imei_id"=>$data_imei_by_number->t_imei_id,
+				"m_shop_id"=>$data_shop->m_shop_id,
 				"create_at"=>date("Y-m-d H:i:s"),
 				"create_by"=>$_SESSION['employee_code'],
 				"m_warehouse_id"=>$_SESSION['m_warehouse_id'],
 			);
-			$this->db->insert('t_income_goods_entry', $data_entry);
+			$this->db->insert('t_outcome_goods_entry', $data_entry);
 
+			//history
 			$this->db->from('m_warehouse');
 			$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
 			$get_warehouse= $this->db->get()->row();
 
 			$data_history = array(
-				"t_imei_id"=>$last_id_imei,
+				"t_imei_id"=>$data_imei_by_number->t_imei_id,
 				"create_at"=>date("Y-m-d H:i:s"),
 				"create_by"=>$_SESSION['employee_code'],
-				"hs_imei_status"=>"Income warehouse ". $get_warehouse->m_warehouse_name,
+				"hs_imei_status"=>"Purchase shop ". $data_shop->m_shop_name ." from warehouse ". $get_warehouse->m_warehouse_name ,
 			);
 			$this->db->insert('hs_imei', $data_history);
-
-
-			$this->db->from('t_stock');
-			$this->db->where('m_product_id',$m_product_id);
-			$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
-			$get= $this->db->get()->row();
-
-			if($get==null){
-				$data_entry = array(
-					"t_stock_total"=>1,
-					"m_product_id"=>$m_product_id,
-					"create_at"=>date("Y-m-d H:i:s"),
-					"create_by"=>$_SESSION['employee_code'],
-					"m_warehouse_id"=>$_SESSION['m_warehouse_id'],
-				);
-				$this->db->insert('t_stock', $data_entry);
-			}
-			else{
-				$data_entry = array(
-					"t_stock_total"=>$get->t_stock_total+1,
-					"update_at"=>date("Y-m-d H:i:s"),
-					"update_by"=>$_SESSION['employee_code'],
-				);
-
-				$this->db->set($data_entry);
-				$this->db->where("t_stock_id",$get->t_stock_id);
-				$this->db->update('t_stock');
-			}
 		}
 		$msg = "Save success";
 		$status = "succsess";
@@ -262,8 +260,25 @@ class t_income_goods_entry_controller extends CI_Controller {
 	public function check_exsis_imei(){
 		$imei 		= $this->input->post('imei');
 
-		$this->db->where("t_imei_number",$imei);
-		$this->db->from('t_imei');
+		$this->db->where('c.m_warehouse_id',$_SESSION['m_warehouse_id']);
+		$this->db->where("a.t_imei_number",$imei);
+		$this->db->from('t_imei a');
+		$this->db->join('m_warehouse c','a.m_warehouse_id=c.m_warehouse_id');
+		$this->db->join('m_product d','a.m_product_id=d.m_product_id');
+		$result['data'] = $this->db->get()->row();
+
+		echo json_encode($result);
+	}
+
+	public function check_imei_ready(){
+		$imei 		= $this->input->post('imei');
+
+		$this->db->where('c.m_warehouse_id',$_SESSION['m_warehouse_id']);
+		$this->db->where("a.t_imei_number",$imei);
+		// $this->db->where("a.t_imei_status","Ready");
+		$this->db->from('t_imei a');
+		$this->db->join('m_warehouse c','a.m_warehouse_id=c.m_warehouse_id');
+		$this->db->join('m_product d','a.m_product_id=d.m_product_id');
 		$result['data'] = $this->db->get()->row();
 
 		echo json_encode($result);
@@ -276,37 +291,53 @@ class t_income_goods_entry_controller extends CI_Controller {
 		$this->db->trans_start(); // Query will be rolled back
 		$this->db->trans_begin();
 
-		$this->db->where("t_income_goods_entry_id",$id);
-		$this->db->from('t_income_goods_entry a');
+		$this->db->where("t_outcome_goods_entry_id",$id);
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
-		$t_income_goods_entry_by_id = $this->db->get()->row();
+		$t_outcome_goods_entry_id = $this->db->get()->row();
 
-		$this->db->where('t_imei_id', $t_income_goods_entry_by_id->t_imei_id);
-		$data = $this->db->delete('hs_imei');
+		//update imei
+		$data_imei = array(
+			"t_imei_status"=>"Ready",
+			"update_at"=>date("Y-m-d H:i:s"),
+			"update_by"=>$_SESSION['employee_code'],
+		);
 
-		$this->db->where('t_income_goods_entry_id', $id);
-		$data = $this->db->delete('t_income_goods_entry');
+		$this->db->set($data_imei);
+		$this->db->where("t_imei_id",$t_outcome_goods_entry_id->t_imei_id);
+		$this->db->update('t_imei');
 
-		$this->db->where('t_imei_id', $t_income_goods_entry_by_id->t_imei_id);
-		$data = $this->db->delete('t_imei');
-
+		//update stock
 		$this->db->from('t_stock');
-		$this->db->where('m_product_id',$t_income_goods_entry_by_id->m_product_id);
+		$this->db->where('m_product_id',$t_outcome_goods_entry_id->m_product_id);
 		$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
 		$get= $this->db->get()->row();
 
-		if($get!=null){
-			$data_entry = array(
-				"t_stock_total"=>$get->t_stock_total-1,
-				"update_at"=>date("Y-m-d H:i:s"),
-				"update_by"=>$_SESSION['employee_code'],
-			);
+		$data_stock = array(
+			"t_stock_total"=>$get->t_stock_total+1,
+			"update_at"=>date("Y-m-d H:i:s"),
+			"update_by"=>$_SESSION['employee_code'],
+		);
 
-			$this->db->set($data_entry);
-			$this->db->where("t_stock_id",$get->t_stock_id);
-			$this->db->update('t_stock');
-		}
+		$this->db->set($data_stock);
+		$this->db->where("t_stock_id",$get->t_stock_id);
+		$this->db->update('t_stock');
 
+		//history
+		$this->db->from('m_warehouse');
+		$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
+		$get_warehouse= $this->db->get()->row();
+
+		$data_history = array(
+			"t_imei_id"=>$t_outcome_goods_entry_id->t_imei_id,
+			"create_at"=>date("Y-m-d H:i:s"),
+			"create_by"=>$_SESSION['employee_code'],
+			"hs_imei_status"=>"Cancel Purchase form warehouse ". $get_warehouse->m_warehouse_name,
+		);
+		$this->db->insert('hs_imei', $data_history);
+
+		$this->db->where('t_outcome_goods_entry_id', $id);
+		$data = $this->db->delete('t_outcome_goods_entry');
 
 		$status 	= "delete";
 		$msg 	= "Delete success";

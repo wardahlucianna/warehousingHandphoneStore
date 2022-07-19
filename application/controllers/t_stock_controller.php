@@ -52,11 +52,15 @@ class t_stock_controller extends CI_Controller {
 		$search 		= $this->input->post('search');
 		$sort 		= $this->input->post('sort');
 
-		$result['row_total']	= $this->db->count_all_results('t_stock');
+		$this->db->from('t_stock a');
+		$this->db->join('m_product b', 'a.m_product_id=b.m_product_id');
+		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
+		$result['row_total']	= count($this->db->get()->result());
 		$result['row_filter'] 	= $result['row_total'];
 
 		$this->db->from('t_stock a');
 		$this->db->join('m_product b', 'a.m_product_id=b.m_product_id');
+		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {
@@ -64,9 +68,10 @@ class t_stock_controller extends CI_Controller {
 		}
 
 		if($search!=null || $search!=""){
-			$this->db->like('m_product_name', $search);
-			$this->db->or_like('t_stock_total', $search);
-			$this->db->or_like('m_product_limit', $search);
+			$this->db->where("(m_product_name LIKE '%".$search."%' ESCAPE '!' 
+							or a.t_stock_total LIKE '%".$search."%' ESCAPE '!'
+							or b.m_product_limit LIKE '%".$search."%' ESCAPE '!')");
+
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);
 		}

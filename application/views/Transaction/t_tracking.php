@@ -86,19 +86,29 @@
                             data_new.sort = sort;
                             data_new.imei = $('#imei').val();
                             var path = "<?php echo $path.'/data_table'?>"
-
                             $.ajax({
                                 type  : 'POST',
                                 url   : path,
                                 dataType : 'json',
                                 data: data_new,
                                 success : function(result){
-                                    callback({
-                                        draw: data.draw,
-                                        data: result.data,
-                                        recordsTotal: result.row_total,
-                                        recordsFiltered: result.row_filter,
-                                    });
+                                    if(result.data.length==0 && $('#imei').val()!=""){
+                                        msg_warning("Sorry, Imei is not found","")
+                                        callback({
+                                            draw: data.draw,
+                                            data: result.data,
+                                            recordsTotal: result.row_total,
+                                            recordsFiltered: result.row_filter,
+                                        });
+                                    }
+                                    else{
+                                        callback({
+                                            draw: data.draw,
+                                            data: result.data,
+                                            recordsTotal: result.row_total,
+                                            recordsFiltered: result.row_filter,
+                                        });
+                                    }
                                 }
                             }).fail(function (xhr, status, error) {
                                 msg_warning("process failed","")

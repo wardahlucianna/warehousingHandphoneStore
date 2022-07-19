@@ -52,10 +52,14 @@ class t_imei_controller extends CI_Controller {
 		$search 		= $this->input->post('search');
 		$sort 		= $this->input->post('sort');
 
-		$result['row_total']	= $this->db->count_all_results('t_imei');
+		$this->db->from('t_imei a');
+		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
+		$result['row_total']	= count($this->db->get()->result());
 		$result['row_filter'] 	= $result['row_total'];
 
 		$this->db->from('t_imei a');
+		$this->db->join('m_product b','a.m_product_id=b.m_product_id');
+		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {
@@ -63,8 +67,10 @@ class t_imei_controller extends CI_Controller {
 		}
 
 		if($search!=null || $search!=""){
-			$this->db->like('t_imei_number', $search);
-			$this->db->or_like('t_imei_status', $search);
+			$this->db->where("(t_imei_number LIKE '%".$search."%' ESCAPE '!' 
+							or m_product_name LIKE '%".$search."%' ESCAPE '!'
+							or t_imei_status LIKE '%".$search."%' ESCAPE '!')");
+
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);
 		}
