@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 19 Jul 2022 pada 13.10
+-- Waktu pembuatan: 23 Jul 2022 pada 18.12
 -- Versi server: 10.4.24-MariaDB
 -- Versi PHP: 7.4.29
 
@@ -37,24 +37,6 @@ CREATE TABLE `hs_imei` (
   `update_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data untuk tabel `hs_imei`
---
-
-INSERT INTO `hs_imei` (`hs_imei_id`, `t_imei_id`, `hs_imei_status`, `create_at`, `create_by`, `update_at`, `update_by`) VALUES
-(178, 150, 'Income warehouse fromWarehouse 2', '2022-07-18 12:04:21', 1, NULL, NULL),
-(179, 151, 'Income warehouse fromWarehouse 2', '2022-07-18 12:04:21', 1, NULL, NULL),
-(180, 152, 'Income warehouse fromWarehouse 2', '2022-07-18 12:04:40', 1, NULL, NULL),
-(181, 153, 'Income warehouse fromWarehouse 2', '2022-07-18 12:04:40', 1, NULL, NULL),
-(182, 154, 'Income warehouse fromWarehouse 2', '2022-07-18 12:11:42', 1, NULL, NULL),
-(184, 156, 'Income warehouse fromWarehouse 3', '2022-07-18 12:14:03', 3, NULL, NULL),
-(185, 157, 'Income warehouse fromWarehouse 3', '2022-07-18 12:14:03', 3, NULL, NULL),
-(186, 150, 'Purchase from warehouse Warehouse 2', '2022-07-18 12:16:50', 1, NULL, NULL),
-(207, 150, 'Return goods to  warehouse Warehouse 2', '2022-07-18 14:24:16', 1, NULL, NULL),
-(208, 151, 'Replacement Imei 101 from  warehouse Warehouse 2', '2022-07-18 14:24:16', 1, NULL, NULL),
-(209, 151, 'Return goods to  warehouse Warehouse 3', '2022-07-18 14:27:28', 3, NULL, NULL),
-(210, 156, 'Replacement Imei 102 from  warehouse Warehouse 3', '2022-07-18 14:27:28', 3, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -76,28 +58,38 @@ CREATE TABLE `map_feature` (
 --
 
 INSERT INTO `map_feature` (`map_feature_id`, `m_user_group_id`, `m_feature_id`, `create_by`, `create_at`, `update_by`, `update_at`) VALUES
-(1, 1, 1, 1, '2019-10-02 05:25:12', 1, '2022-07-18 15:12:26'),
-(4, 1, 17, 1, '2019-10-02 05:28:06', 1, '2022-07-18 15:12:26'),
-(9, 1, 6, 1, '2019-10-02 05:28:06', 1, '2022-07-18 15:12:26'),
-(10, 1, 2, 1, '2019-10-02 05:28:06', 1, '2022-07-18 15:12:26'),
-(11, 1, 8, 1, '2019-10-02 05:28:06', 1, '2022-07-18 15:12:26'),
-(15, 1, 5, 1, '2019-10-02 05:28:06', 1, '2022-07-18 15:12:26'),
-(23, 1, 4, 1, '2019-10-02 05:28:06', 1, '2022-07-18 15:12:26'),
-(25, 1, 22, 1, '2022-06-28 16:50:46', 1, '2022-07-18 15:12:26'),
-(26, 1, 18, 1, '2022-06-28 18:20:47', 1, '2022-07-18 15:12:26'),
-(27, 1, 19, 1, '2022-06-28 18:20:47', 1, '2022-07-18 15:12:26'),
-(28, 1, 25, 1, '2022-06-28 18:39:03', 1, '2022-07-18 15:12:26'),
-(29, 1, 26, 1, '2022-06-29 09:09:20', 1, '2022-07-18 15:12:26'),
-(30, 1, 27, 1, '2022-06-29 10:11:46', 1, '2022-07-18 15:12:26'),
-(31, 1, 28, 1, '2022-06-29 16:09:04', 1, '2022-07-18 15:12:26'),
-(32, 1, 29, 1, '2022-06-29 17:01:14', 1, '2022-07-18 15:12:26'),
-(33, 1, 30, 1, '2022-07-04 22:16:30', 1, '2022-07-18 15:12:26'),
-(34, 1, 31, 1, '2022-07-04 22:16:30', 1, '2022-07-18 15:12:26'),
-(35, 1, 32, 1, '2022-07-04 22:16:30', 1, '2022-07-18 15:12:26'),
-(36, 1, 33, 3, '2022-07-05 17:16:43', 1, '2022-07-18 15:12:26'),
-(37, 1, 34, 3, '2022-07-05 17:37:33', 1, '2022-07-18 15:12:26'),
-(38, 1, 35, 3, '2022-07-08 19:54:23', 1, '2022-07-18 15:12:26'),
-(39, 1, 36, 1, '2022-07-18 15:12:26', NULL, NULL);
+(1, 1, 1, 1, '2019-10-02 05:25:12', 1, '2022-07-22 21:13:39'),
+(4, 1, 17, 1, '2019-10-02 05:28:06', 1, '2022-07-22 21:13:39'),
+(9, 1, 6, 1, '2019-10-02 05:28:06', 1, '2022-07-22 21:13:39'),
+(10, 1, 2, 1, '2019-10-02 05:28:06', 1, '2022-07-22 21:13:39'),
+(11, 1, 8, 1, '2019-10-02 05:28:06', 1, '2022-07-22 21:13:39'),
+(15, 1, 5, 1, '2019-10-02 05:28:06', 1, '2022-07-22 21:13:39'),
+(23, 1, 4, 1, '2019-10-02 05:28:06', 1, '2022-07-22 21:13:39'),
+(25, 1, 22, 1, '2022-06-28 16:50:46', 1, '2022-07-22 21:13:39'),
+(26, 1, 18, 1, '2022-06-28 18:20:47', 1, '2022-07-22 21:13:39'),
+(27, 1, 19, 1, '2022-06-28 18:20:47', 1, '2022-07-22 21:13:39'),
+(28, 1, 25, 1, '2022-06-28 18:39:03', 1, '2022-07-22 21:13:39'),
+(29, 1, 26, 1, '2022-06-29 09:09:20', 1, '2022-07-22 21:13:39'),
+(30, 1, 27, 1, '2022-06-29 10:11:46', 1, '2022-07-22 21:13:39'),
+(31, 1, 28, 1, '2022-06-29 16:09:04', 1, '2022-07-22 21:13:39'),
+(32, 1, 29, 1, '2022-06-29 17:01:14', 1, '2022-07-22 21:13:39'),
+(33, 1, 30, 1, '2022-07-04 22:16:30', 1, '2022-07-22 21:13:39'),
+(34, 1, 31, 1, '2022-07-04 22:16:30', 1, '2022-07-22 21:13:39'),
+(35, 1, 32, 1, '2022-07-04 22:16:30', 1, '2022-07-22 21:13:39'),
+(36, 1, 33, 3, '2022-07-05 17:16:43', 1, '2022-07-22 21:13:39'),
+(37, 1, 34, 3, '2022-07-05 17:37:33', 1, '2022-07-22 21:13:39'),
+(38, 1, 35, 3, '2022-07-08 19:54:23', 1, '2022-07-22 21:13:39'),
+(39, 1, 36, 1, '2022-07-18 15:12:26', 1, '2022-07-22 21:13:39'),
+(40, 1, 37, 1, '2022-07-22 21:13:39', NULL, NULL),
+(41, 2, 17, 1, '2022-07-22 22:22:55', NULL, NULL),
+(42, 2, 18, 1, '2022-07-22 22:22:55', NULL, NULL),
+(43, 2, 30, 1, '2022-07-22 22:22:55', NULL, NULL),
+(44, 2, 5, 1, '2022-07-22 22:22:55', NULL, NULL),
+(45, 2, 19, 1, '2022-07-22 22:22:55', NULL, NULL),
+(46, 2, 36, 1, '2022-07-22 22:22:55', NULL, NULL),
+(47, 2, 37, 1, '2022-07-22 22:22:55', NULL, NULL),
+(48, 2, 31, 1, '2022-07-22 22:22:55', NULL, NULL),
+(49, 2, 32, 1, '2022-07-22 22:22:55', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -135,7 +127,7 @@ CREATE TABLE `m_employee` (
   `m_employee_id` int(11) NOT NULL,
   `m_position_id` int(11) NOT NULL,
   `m_user_group_id` int(11) NOT NULL,
-  `m_warehouse_id` int(11) NOT NULL,
+  `m_warehouse_id` int(11) DEFAULT NULL,
   `m_employee_full_name` varchar(50) NOT NULL,
   `m_employee_sort_name` varchar(10) NOT NULL,
   `m_employee_email` varchar(50) DEFAULT NULL,
@@ -155,7 +147,8 @@ CREATE TABLE `m_employee` (
 
 INSERT INTO `m_employee` (`m_employee_id`, `m_position_id`, `m_user_group_id`, `m_warehouse_id`, `m_employee_full_name`, `m_employee_sort_name`, `m_employee_email`, `m_employee_email_verification`, `m_employee_username`, `m_employee_password`, `m_employee_status`, `create_by`, `create_at`, `update_by`, `update_at`) VALUES
 (1, 2, 1, 2, 'Admin', 'admin', 'yonatan@street88shop.com', 1, 'admin', 'MTExMTEx', 'Active', NULL, NULL, 1, '2022-06-29 00:04:36'),
-(3, 2, 1, 9, 'Wardah Lucianna Suhalim', 'Wardah', NULL, 1, 'wardah', 'MTExMTEx', 'Active', 1, '2020-02-24 14:06:51', 1, '2022-07-02 19:54:12');
+(3, 2, 1, 9, 'Wardah Lucianna Suhalim', 'Wardah', NULL, 1, 'wardah', 'MTExMTEx', 'Active', 1, '2020-02-24 14:06:51', 1, '2022-07-02 19:54:12'),
+(101, 4, 2, NULL, 'Rosealina', 'Rose', NULL, NULL, 'rose', 'MTExMTEx', 'Active', 1, '2022-07-22 22:21:06', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -205,7 +198,8 @@ INSERT INTO `m_feature` (`m_feature_id`, `m_feature_group_id`, `m_feature_name`,
 (33, 8, 'Stock Out', 't_stock_out_controller/index', '', 1, 2, 'Left menu', 'Active', 3, '2022-07-05 17:16:30', NULL, NULL),
 (34, 7, 'Shop', 'm_shop_controller/index', '', 1, 2, 'Left menu', 'Active', 3, '2022-07-05 17:37:26', NULL, NULL),
 (35, 8, 'Return Stock Out', 't_return_stock_out_controller/index', '', 1, 5, 'Left menu', 'Active', 3, '2022-07-08 19:54:14', 3, '2022-07-08 20:24:05'),
-(36, 9, 'Report Stock In', 'r_stock_in_controller/index', '', 1, 1, 'Left menu', 'Active', 1, '2022-07-18 15:12:06', NULL, NULL);
+(36, 9, 'Report Stock In', 'r_stock_in_controller/index', '', 1, 1, 'Left menu', 'Active', 1, '2022-07-18 15:12:06', NULL, NULL),
+(37, 9, 'Report Stock Out', 'r_stock_out_controller/index', '', 1, 2, 'Left menu', 'Active', 1, '2022-07-22 21:13:30', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -260,9 +254,9 @@ CREATE TABLE `m_position` (
 --
 
 INSERT INTO `m_position` (`m_position_id`, `m_position_name`, `m_position_status`, `m_position_top_manager`, `create_by`, `create_at`, `update_by`, `update_at`) VALUES
-(1, 'Root', 'Active', '1', 1, '2019-06-12 18:23:07', 1, '2019-06-25 20:21:42'),
 (2, 'Adminstrator', 'Active', '1', 1, '2019-06-12 18:23:07', 1, '2019-07-16 16:17:26'),
-(3, 'Staff', 'Active', '2', 1, '2019-07-23 09:39:47', NULL, NULL);
+(3, 'Staff', 'Active', '2', 1, '2019-07-23 09:39:47', NULL, NULL),
+(4, 'Owner', 'Active', NULL, 1, '2022-07-22 22:17:26', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -390,7 +384,8 @@ CREATE TABLE `m_user_group` (
 --
 
 INSERT INTO `m_user_group` (`m_user_group_id`, `m_user_group_name`, `m_user_group_status`, `create_by`, `create_at`, `update_by`, `update_at`) VALUES
-(1, 'Admin', 'Active', NULL, NULL, 1, '2019-06-25 17:48:12');
+(1, 'Admin', 'Active', NULL, NULL, 1, '2019-06-25 17:48:12'),
+(2, 'Owner', 'Active', 1, '2022-07-22 22:16:47', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -437,19 +432,6 @@ CREATE TABLE `t_imei` (
   `m_warehouse_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data untuk tabel `t_imei`
---
-
-INSERT INTO `t_imei` (`t_imei_id`, `t_imei_number`, `t_imei_status`, `m_product_id`, `note`, `create_at`, `create_by`, `update_at`, `update_by`, `m_warehouse_id`) VALUES
-(150, '101', 'Ready', 1, '', '2022-07-18 12:04:21', 1, '2022-07-18 14:24:16', 1, 2),
-(151, '102', 'Ready', 4, '', '2022-07-18 12:04:21', 1, '2022-07-18 14:27:28', 3, 9),
-(152, '103', 'Ready', 4, '', '2022-07-18 12:04:40', 1, NULL, NULL, 2),
-(153, '104', 'Ready', 5, '', '2022-07-18 12:04:40', 1, NULL, NULL, 2),
-(154, '105', 'Ready', 5, '', '2022-07-18 12:11:42', 1, NULL, NULL, 2),
-(156, '201', 'Sold', 4, '', '2022-07-18 12:14:03', 3, '2022-07-18 14:27:28', 3, 9),
-(157, '202', 'Ready', 5, '', '2022-07-18 12:14:03', 3, NULL, NULL, 9);
-
 -- --------------------------------------------------------
 
 --
@@ -466,19 +448,6 @@ CREATE TABLE `t_income_goods_entry` (
   `update_at` datetime DEFAULT NULL,
   `update_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data untuk tabel `t_income_goods_entry`
---
-
-INSERT INTO `t_income_goods_entry` (`t_income_goods_entry_id`, `t_income_goods_entry_code`, `t_imei_id`, `m_warehouse_id`, `create_at`, `create_by`, `update_at`, `update_by`) VALUES
-(143, '62d4e9d56be95', 150, 2, '2022-07-18 12:04:21', 1, NULL, NULL),
-(144, '62d4e9d56be95', 151, 2, '2022-07-18 12:04:21', 1, NULL, NULL),
-(145, '62d4e9e801322', 152, 2, '2022-07-18 12:04:40', 1, NULL, NULL),
-(146, '62d4e9e801322', 153, 2, '2022-07-18 12:04:40', 1, NULL, NULL),
-(147, '62d4eb8e2018a', 154, 2, '2022-07-18 12:11:42', 1, NULL, NULL),
-(149, '62d4ec1bafa9d', 156, 9, '2022-07-18 12:14:03', 3, NULL, NULL),
-(150, '62d4ec1bafa9d', 157, 9, '2022-07-18 12:14:03', 3, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -497,13 +466,6 @@ CREATE TABLE `t_outcome_goods_entry` (
   `update_at` datetime DEFAULT NULL,
   `update_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data untuk tabel `t_outcome_goods_entry`
---
-
-INSERT INTO `t_outcome_goods_entry` (`t_outcome_goods_entry_Id`, `m_shop_id`, `t_imei_id`, `t_outcome_goods_entry_code`, `m_warehouse_id`, `create_at`, `create_by`, `update_at`, `update_by`) VALUES
-(20, 2, 156, '62d509e5b640b', 2, '2022-07-18 14:21:09', 1, '2022-07-18 14:27:28', 3);
 
 -- --------------------------------------------------------
 
@@ -524,14 +486,6 @@ CREATE TABLE `t_return_stock_in` (
   `update_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data untuk tabel `t_return_stock_in`
---
-
-INSERT INTO `t_return_stock_in` (`t_return_stock_in_id`, `m_shop_id`, `t_imei_id_return`, `t_imei_id_replacement`, `m_warehouse_id`, `t_return_stock_in_note`, `create_by`, `create_at`, `update_by`, `update_at`) VALUES
-(55, 2, 150, 151, 2, '12345', 1, '2022-07-18 14:24:16', NULL, NULL),
-(56, 2, 151, 156, 9, 'cobax', 3, '2022-07-18 14:27:28', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -548,17 +502,6 @@ CREATE TABLE `t_stock` (
   `update_at` datetime DEFAULT NULL,
   `update_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data untuk tabel `t_stock`
---
-
-INSERT INTO `t_stock` (`t_stock_id`, `t_stock_total`, `m_warehouse_id`, `m_product_id`, `create_at`, `create_by`, `update_at`, `update_by`) VALUES
-(11, 1, 2, 1, '2022-07-18 12:04:21', 1, '2022-07-18 14:24:16', 1),
-(12, 1, 2, 4, '2022-07-18 12:04:21', 1, '2022-07-18 14:24:16', 1),
-(13, 2, 2, 5, '2022-07-18 12:04:40', 1, '2022-07-18 12:12:05', 1),
-(14, 1, 9, 4, '2022-07-18 12:14:03', 3, '2022-07-18 14:27:28', 3),
-(15, 1, 9, 5, '2022-07-18 12:14:03', 3, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -703,13 +646,13 @@ ALTER TABLE `t_stock`
 -- AUTO_INCREMENT untuk tabel `hs_imei`
 --
 ALTER TABLE `hs_imei`
-  MODIFY `hs_imei_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=211;
+  MODIFY `hs_imei_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=294;
 
 --
 -- AUTO_INCREMENT untuk tabel `map_feature`
 --
 ALTER TABLE `map_feature`
-  MODIFY `map_feature_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `map_feature_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT untuk tabel `m_color`
@@ -721,13 +664,13 @@ ALTER TABLE `m_color`
 -- AUTO_INCREMENT untuk tabel `m_employee`
 --
 ALTER TABLE `m_employee`
-  MODIFY `m_employee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `m_employee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT untuk tabel `m_feature`
 --
 ALTER TABLE `m_feature`
-  MODIFY `m_feature_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `m_feature_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT untuk tabel `m_feature_group`
@@ -739,7 +682,7 @@ ALTER TABLE `m_feature_group`
 -- AUTO_INCREMENT untuk tabel `m_position`
 --
 ALTER TABLE `m_position`
-  MODIFY `m_position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `m_position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `m_product`
@@ -769,7 +712,7 @@ ALTER TABLE `m_size`
 -- AUTO_INCREMENT untuk tabel `m_user_group`
 --
 ALTER TABLE `m_user_group`
-  MODIFY `m_user_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `m_user_group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `m_warehouse`
@@ -781,31 +724,31 @@ ALTER TABLE `m_warehouse`
 -- AUTO_INCREMENT untuk tabel `t_imei`
 --
 ALTER TABLE `t_imei`
-  MODIFY `t_imei_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
+  MODIFY `t_imei_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=178;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_income_goods_entry`
 --
 ALTER TABLE `t_income_goods_entry`
-  MODIFY `t_income_goods_entry_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+  MODIFY `t_income_goods_entry_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_outcome_goods_entry`
 --
 ALTER TABLE `t_outcome_goods_entry`
-  MODIFY `t_outcome_goods_entry_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `t_outcome_goods_entry_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_return_stock_in`
 --
 ALTER TABLE `t_return_stock_in`
-  MODIFY `t_return_stock_in_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `t_return_stock_in_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT untuk tabel `t_stock`
 --
 ALTER TABLE `t_stock`
-  MODIFY `t_stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `t_stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
