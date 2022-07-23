@@ -67,7 +67,7 @@ class t_return_stock_out_controller extends CI_Controller {
 		$this->db->join('t_imei c','a.t_imei_id_return=c.t_imei_id');
 		$this->db->join('t_imei d','a.t_imei_id_replacement=d.t_imei_id');
 		$this->db->join('m_employee e','a.create_by=e.m_employee_id');
-		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where("DATE_FORMAT(a.create_at, '%M %Y')=DATE_FORMAT('".$date."', '%M %Y' )" );
 		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->select(
 				'a.t_return_stock_in_id,
@@ -86,7 +86,7 @@ class t_return_stock_out_controller extends CI_Controller {
 		$this->db->join('t_imei c','a.t_imei_id_return=c.t_imei_id');
 		$this->db->join('t_imei d','a.t_imei_id_replacement=d.t_imei_id');
 		$this->db->join('m_employee e','a.create_by=e.m_employee_id');
-		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where("DATE_FORMAT(a.create_at, '%M %Y')=DATE_FORMAT('".$date."', '%M %Y' )" );
 		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->select(
 				'a.t_return_stock_in_id,
@@ -151,7 +151,15 @@ class t_return_stock_out_controller extends CI_Controller {
 		$this->db->from('t_imei');
 		$this->db->where('t_imei_number',$imei_replacement);
 		$get_imei_replacment= $this->db->get()->row();
-		
+
+		$this->db->from('m_warehouse');
+		$this->db->where('m_warehouse_id',$get_imei_replacment->m_warehouse_id);
+		$get_warehouse= $this->db->get()->row();
+
+		$this->db->from('m_warehouse');
+		$this->db->where('m_warehouse_id',$get_imei_return->m_warehouse_id);
+		$get_warehouse_old= $this->db->get()->row();
+
 		//create entry
 		$data_entry = array(
 			"t_imei_id_return"=>$get_imei_return->t_imei_id,
@@ -174,7 +182,7 @@ class t_return_stock_out_controller extends CI_Controller {
 			"t_imei_status"=>"Ready",
 			"update_at"=>date("Y-m-d H:i:s"),
 			"update_by"=>$_SESSION['employee_code'],
-			"m_warehouse_id"=>$_SESSION['m_warehouse_id'],
+			"m_warehouse_id"=>$get_warehouse->m_warehouse_id,
 		);
 
 		$this->db->set($data_imei_return);
@@ -186,21 +194,6 @@ class t_return_stock_out_controller extends CI_Controller {
 		$this->db->join('m_warehouse b','a.m_warehouse_id=b.m_warehouse_id');
 		$this->db->where('t_imei_number',$imei_return);
 		$data_imei_by_number_return= $this->db->get()->row();
-
-		$this->db->from('m_warehouse');
-		$this->db->where('m_warehouse_id',$_SESSION['m_warehouse_id']);
-		$get_warehouse= $this->db->get()->row();
-
-		if($data_imei_by_number_return->m_warehouse_id!=$get_warehouse->m_warehouse_id){
-			$data_history_return = array(
-				"t_imei_id"=>$data_imei_by_number_return->t_imei_id,
-				"create_at"=>date("Y-m-d H:i:s"),
-				"create_by"=>$_SESSION['employee_code'],
-				"hs_imei_status"=>"Move goods from warehouse ".$data_imei_by_number_return->m_warehouse_name." to  warehouse ". $get_warehouse->m_warehouse_name,
-			);
-			$this->db->insert('hs_imei', $data_history_return);
-		}
-		
 
 		$data_history_return_1 = array(
 			"t_imei_id"=>$data_imei_by_number_return->t_imei_id,
@@ -263,7 +256,7 @@ class t_return_stock_out_controller extends CI_Controller {
 			"t_imei_id"=>$data_imei_by_number_replacement->t_imei_id,
 			"create_at"=>date("Y-m-d H:i:s"),
 			"create_by"=>$_SESSION['employee_code'],
-			"hs_imei_status"=>"Replacement Imei ".$imei_return." from  warehouse ". $get_warehouse->m_warehouse_name,
+			"hs_imei_status"=>"Replacement Imei ".$imei_return." from  warehouse ". $get_warehouse->m_warehouse_name." to warehouse ".$get_warehouse_old->m_warehouse_name,
 		);
 		$this->db->insert('hs_imei', $data_history_replacement);
 
@@ -298,6 +291,18 @@ class t_return_stock_out_controller extends CI_Controller {
 		$this->db->set($data_outcome);
 		$this->db->where("t_imei_id",$get_Stock_return->t_imei_id);
 		$this->db->update('t_outcome_goods_entry');
+
+		$data_imei_replacement = array(
+			"t_imei_status"=>"Ready",
+			"update_at"=>date("Y-m-d H:i:s"),
+			"update_by"=>$_SESSION['employee_code'],
+			"t_imei_status"=>"Sold",
+			"m_warehouse_id"=>$get_warehouse_old->m_warehouse_id,
+		);
+
+		$this->db->set($data_imei_replacement);
+		$this->db->where("t_imei_number",$imei_replacement);
+		$this->db->update('t_imei');
 
 		if ($this->db->trans_status() === FALSE){
 		    $this->db->trans_rollback();

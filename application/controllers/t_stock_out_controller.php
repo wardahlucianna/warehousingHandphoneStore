@@ -77,7 +77,7 @@ class t_stock_out_controller extends CI_Controller {
 				'DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at,
 				a.t_outcome_goods_entry_code,
 				b.m_employee_full_name');
-		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where("DATE_FORMAT(a.create_at, '%M %Y')=DATE_FORMAT('".$date."', '%M %Y' )" );
 		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$result['row_total']	= count($this->db->get()->result());
 		$result['row_filter'] 	= $result['row_total'];
@@ -86,10 +86,10 @@ class t_stock_out_controller extends CI_Controller {
 		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('m_employee b','a.create_by=b.m_employee_id');
 		$this->db->select(
-				'DATE_FORMAT(a.create_at, "%M %Y %h:%i %p") as create_at,
+				'DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at,
 				a.t_outcome_goods_entry_code,
 				b.m_employee_full_name');
-		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where("DATE_FORMAT(a.create_at, '%M %Y')=DATE_FORMAT('".$date."', '%M %Y' )" );
 		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->limit($length,$start);
 		
@@ -124,11 +124,13 @@ class t_stock_out_controller extends CI_Controller {
 		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
 		$this->db->join('m_product c','b.m_product_id=c.m_product_id');
+		$this->db->join('m_shop d','d.m_shop_id=a.m_shop_id');
 		$this->db->where('t_outcome_goods_entry_code',$id);
 		$this->db->select(
 				'a.t_outcome_goods_entry_id,
 				c.m_product_name,
 				b.t_imei_number,
+				d.m_shop_name,
 				b.note');
 
 		$result['row_total'] = count($this->db->get()->result());
@@ -138,11 +140,13 @@ class t_stock_out_controller extends CI_Controller {
 		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('t_imei b','a.t_imei_id=b.t_imei_id');
 		$this->db->join('m_product c','b.m_product_id=c.m_product_id');
+		$this->db->join('m_shop d','d.m_shop_id=a.m_shop_id');
 		$this->db->where('t_outcome_goods_entry_code',$id);
 		$this->db->select(
 				'a.t_outcome_goods_entry_id,
 				c.m_product_name,
 				b.t_imei_number,
+				d.m_shop_name,
 				b.note');
 		$this->db->limit($length,$start);
 		
@@ -153,7 +157,7 @@ class t_stock_out_controller extends CI_Controller {
 		if($search!=null || $search!=""){
 			$this->db->where("(m_product_name LIKE '%".$search."%' ESCAPE '!' 
 							or b.t_imei_number LIKE '%".$search."%' ESCAPE '!'
-						or b.note LIKE '%".$search."%' ESCAPE '!')");
+						or d.m_shop_name LIKE '%".$search."%' ESCAPE '!')");
 
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);

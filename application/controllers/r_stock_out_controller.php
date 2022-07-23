@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class r_stock_in_controller extends CI_Controller {
+class r_stock_out_controller extends CI_Controller {
 	function __construct(){
 		parent::__construct();
 		$this->load->helper(array("html","form","url","text"));
@@ -45,6 +45,13 @@ class r_stock_in_controller extends CI_Controller {
 			$this->db->order_by('m_warehouse_name');
 			$get= $this->db->get();
 			$data['data']['list_m_warehouse']= $get->result();
+
+			$this->db->from('m_shop');
+			$this->db->where('m_shop_status', 'Active');
+			$this->db->select('m_shop_id, m_shop_name');
+			$this->db->order_by('m_shop_name');
+			$get= $this->db->get();
+			$data['data']['list_m_shop']= $get->result();
 		}
 		else if($aksi=='report'){
 
@@ -52,6 +59,7 @@ class r_stock_in_controller extends CI_Controller {
 		 	$data['data']["start_date"] = $this->input->get('start_date_format');
 		 	$data['data']["end_date"] = $this->input->get('end_date_format');
 		 	$data['data']["date_range"] = $this->input->get('date_range');
+		 	$data['data']["m_shop_id"] = $this->input->get('m_shop_id');
 		}
 		$result['data'] = json_encode($data);
 		$this->load->view($group_title.'/'.$file_title,$result);
@@ -66,14 +74,16 @@ class r_stock_in_controller extends CI_Controller {
 		$sort = $this->input->post('sort');
 		$date = $this->input->post('date');
 		$m_warehouse_id = $this->input->post('m_warehouse_id');
+		$m_shope_id = $this->input->post('m_shope_id');
 		$start_date = $this->input->post('start_date');
 		$end_date = $this->input->post('end_date');
 
-		$this->db->from('t_income_goods_entry a');
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('m_employee b','a.create_by=b.m_employee_id');
 		$this->db->join('t_imei c','a.t_imei_id=c.t_imei_id');
 		$this->db->join('m_product d','c.m_product_id=d.m_product_id');
 		$this->db->join('m_warehouse e','a.m_warehouse_id=e.m_warehouse_id');
+		$this->db->join('m_shop i','a.m_shop_id=i.m_shop_id');
 		$this->db->join('m_color f','d.m_color_id=f.m_color_id');
 		$this->db->join('m_size g','d.m_size_id=g.m_size_id');
 		$this->db->join('m_product_type h','d.m_product_type_id=h.m_product_type_id');
@@ -83,24 +93,30 @@ class r_stock_in_controller extends CI_Controller {
 				c.t_imei_number,
 				c.t_imei_status,
 				e.m_warehouse_name,
+				i.m_shop_name,
 				h.m_product_type_name,
 				f.m_color_name,
 				g.m_size_name,
-				a.t_income_goods_entry_id');
+				a.t_outcome_goods_entry_id');
 		$this->db->where(" a.create_at BETWEEN '".$start_date."' AND '".$end_date."'");
 
 		if($m_warehouse_id!=null || $m_warehouse_id!=""){
 			 $this->db->where('a.m_warehouse_id=',$m_warehouse_id);
 		}
 
+		if($m_warehouse_id!=null || $m_warehouse_id!=""){
+			$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
+		}
+
 		$result['row_total']	= count($this->db->get()->result());
 		$result['row_filter'] 	= $result['row_total'];
 
-		$this->db->from('t_income_goods_entry a');
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('m_employee b','a.create_by=b.m_employee_id');
 		$this->db->join('t_imei c','a.t_imei_id=c.t_imei_id');
 		$this->db->join('m_product d','c.m_product_id=d.m_product_id');
 		$this->db->join('m_warehouse e','a.m_warehouse_id=e.m_warehouse_id');
+		$this->db->join('m_shop i','a.m_shop_id=i.m_shop_id');
 		$this->db->join('m_color f','d.m_color_id=f.m_color_id');
 		$this->db->join('m_size g','d.m_size_id=g.m_size_id');
 		$this->db->join('m_product_type h','d.m_product_type_id=h.m_product_type_id');
@@ -110,15 +126,20 @@ class r_stock_in_controller extends CI_Controller {
 				c.t_imei_number,
 				c.t_imei_status,
 				e.m_warehouse_name,
+				i.m_shop_name,
 				h.m_product_type_name,
 				f.m_color_name,
 				g.m_size_name,
-				a.t_income_goods_entry_id');
+				a.t_outcome_goods_entry_id');
 
 		$this->db->where(" a.create_at BETWEEN '".$start_date."' AND '".$end_date."'");
 
 		if($m_warehouse_id!=null || $m_warehouse_id!=""){
 			$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
+		}
+
+		if($m_shope_id!=null || $m_shope_id!=""){
+			$this->db->where('a.m_shope_id=',$m_shope_id);
 		}
 
 		$this->db->limit($length,$start);
@@ -135,6 +156,7 @@ class r_stock_in_controller extends CI_Controller {
 							or m_product_type_name LIKE '%".$search."%' ESCAPE '!' 
 							or m_color_name LIKE '%".$search."%' ESCAPE '!' 
 							or m_size_name LIKE '%".$search."%' ESCAPE '!' 
+							or m_shop_name LIKE '%".$search."%' ESCAPE '!' 
 							or DATE_FORMAT(a.create_at, '%M %Y %h:%i %p') LIKE '%".$search."%' ESCAPE '!')");
 			$result['data'] = $this->db->get()->result();
 			$result['row_filter'] = count($result['data']);
@@ -152,12 +174,14 @@ class r_stock_in_controller extends CI_Controller {
 		$start_date = $this->input->post('start_date');
 		$m_warehouse_id = $this->input->post('m_warehouse_id');
 		$end_date = $this->input->post('end_date');
+		$m_shope_id = $this->input->post('m_shope_id');
 
-		$this->db->from('t_income_goods_entry a');
+		$this->db->from('t_outcome_goods_entry a');
 		$this->db->join('m_employee b','a.create_by=b.m_employee_id');
 		$this->db->join('t_imei c','a.t_imei_id=c.t_imei_id');
 		$this->db->join('m_product d','c.m_product_id=d.m_product_id');
 		$this->db->join('m_warehouse e','a.m_warehouse_id=e.m_warehouse_id');
+		$this->db->join('m_shop i','a.m_shop_id=i.m_shop_id');
 		$this->db->join('m_color f','d.m_color_id=f.m_color_id');
 		$this->db->join('m_size g','d.m_size_id=g.m_size_id');
 		$this->db->join('m_product_type h','d.m_product_type_id=h.m_product_type_id');
@@ -167,21 +191,24 @@ class r_stock_in_controller extends CI_Controller {
 				c.t_imei_number,
 				c.t_imei_status,
 				e.m_warehouse_name,
+				i.m_shop_name,
 				h.m_product_type_name,
 				f.m_color_name,
 				g.m_size_name,
-				a.t_income_goods_entry_id');
-
+				a.t_outcome_goods_entry_id');
 		$this->db->where(" a.create_at BETWEEN '".$start_date."' AND '".$end_date."'");
+
+		if($m_warehouse_id!=null || $m_warehouse_id!=""){
+			 $this->db->where('a.m_warehouse_id=',$m_warehouse_id);
+		}
 
 		if($m_warehouse_id!=null || $m_warehouse_id!=""){
 			$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
 		}
 
-		$this->db->order_by('m_product_type_name asc,m_size_name asc,m_color_name asc');
-
+		$this->db->order_by('m_shop_name asc,m_product_type_name asc,m_size_name asc,m_color_name asc');
 		$data["data"] = $this->db->get()->result();
-		$html=$this->load->view('Report/report_stock_in', $data, true); 
+		$html=$this->load->view('Report/report_stock_out', $data, true); 
 		
 		if(isset($_POST["btn_print"])){
 			$this->load->library('m_pdf');

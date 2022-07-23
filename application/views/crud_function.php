@@ -215,7 +215,7 @@ function get_group_select2_full($label,$name,$cannot_null = true,$list,$value=""
         }
     }
 
-    $input =    "<div class='form-group row'>".
+    $input =    "<div class='form-group row' id='".$label."_content'>".
                     "<div class='col-lg-1 col-md-0'></div>".
                     "<label for='text1' class='control-label pull-left col-lg-3 col-md-4'>".$name.
                         "<span class='text-danger'>".$cannot_null."</span></label>".

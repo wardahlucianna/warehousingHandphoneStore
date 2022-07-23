@@ -48,12 +48,6 @@ class m_position_controller extends CI_Controller {
 			$count= $get->num_rows();
 			$data['data']['data']= $get->result();
 
-			$this->db->from('m_position');
-			$this->db->where('m_position_status', 'Active');
-			$this->db->select('m_position_id,m_position_name');
-			$get1= $this->db->get();
-			$data['data']['list_m_position_top_manager']= $get1->result();
-			array_push($data['data']['list_m_position_top_manager'],array("m_position_name" => "Root"));
 		}
 		$result['data'] = json_encode($data);
 		$this->load->view($group_title.'/'.$file_title,$result);
@@ -70,8 +64,6 @@ class m_position_controller extends CI_Controller {
 		$result['row_filter'] 	= $result['row_total'];
 
 		$this->db->from('m_position a');
-		$this->db->join('m_position b', 'a.m_position_top_manager=b.m_position_id');
-		$this->db->select('a.m_position_id,a.m_position_name,b.m_position_name as m_position_top_manager,a.m_position_status');
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {
@@ -97,7 +89,6 @@ class m_position_controller extends CI_Controller {
 	{
 		$code	= $this->input->post('m_position_id');
 		$m_position_name	= $this->input->post('m_position_name');
-		$m_position_top_manager	= $this->input->post('m_position_top_manager');
 		$m_position_status	= $this->input->post('m_position_status');
 		$m_position_status	= $m_position_status==true?"Active":"Not Active";
 
@@ -107,7 +98,6 @@ class m_position_controller extends CI_Controller {
 		$data = array(
 			"m_position_id"=>$code,
 			"m_position_name"=>$m_position_name,
-			"m_position_top_manager"=>$m_position_top_manager,
 			"m_position_status"=>$m_position_status,
 		);
 

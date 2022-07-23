@@ -20,6 +20,7 @@
     function table_master($path){
         $input_kiri =  
             get_group_input_full("date","Date","text",50,true,"")
+            .get_input("date_format","Date","hidden",50,true,"")
         ;
         ?>
 
@@ -44,14 +45,26 @@
             <script type="text/javascript">
 
                 $(document).ready(function(){
+                    var formattedDate = new Date();
+                    var d = formattedDate.getDate();
+                    var m =  formattedDate.getMonth();
+                    m += 1;  // JavaScript months are 0-11
+                    var y = formattedDate.getFullYear();
+                    $("#date_format").val(y+"/"+m+"/"+d)
+
                     $('#date').datetimepicker({
                         format: 'L',
                         defaultDate: new Date(),
                         format: 'MMMM YYYY'
-                     });
-
-                    $("#date").on('dp.change',function(e) {
+                    }).on('dp.change',function(e) {
+                        var formattedDate = new Date(e.date);
+                        var d = formattedDate.getDate();
+                        var m =  formattedDate.getMonth();
+                        m += 1;  // JavaScript months are 0-11
+                        var y = formattedDate.getFullYear();
+                        $("#date_format").val(y+"/"+m+"/"+d)
                         $('#master_table').DataTable().ajax.reload()
+                        
                     });
 
                     master_table = $("#master_table").dataTable({
@@ -95,7 +108,7 @@
                             data_new.length = data.length;
                             data_new.search = data.search["value"];
                             data_new.sort = sort;
-                            data_new.date = $("#date").val();
+                            data_new.date = $("#date_format").val();
                             var path = "<?php echo $path.'/data_table'?>"
 
                             $.ajax({
@@ -380,9 +393,11 @@
                             date_string = date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear() + " " + date.toLocaleTimeString();
 
                             msg_warning("Sorry, Imei "+ObjInputTransaction.imei+" already entry in "+ result.data.m_warehouse_name+" at " + date_string)
+                            $('#imei').val('');
                         }
                         else if(indexOfObject>=0){
-                            msg_warning("Sorry, Imei "+ObjInputTransaction.imei+" already exsis in this entry");                            
+                            msg_warning("Sorry, Imei "+ObjInputTransaction.imei+" already exsis in this entry");
+                            $('#imei').val('');                            
                         }
                         else{
                             if(ArrInputTransaction.length<50){

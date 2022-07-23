@@ -91,7 +91,7 @@ class m_employee_controller extends CI_Controller {
 		$this->db->from('m_employee a');
 		$this->db->join('m_position b','a.m_position_id=b.m_position_id');
 		$this->db->join('m_user_group c','a.m_user_group_id=c.m_user_group_id');
-		$this->db->join('m_warehouse d','a.m_warehouse_id=d.m_warehouse_id');
+		$this->db->join('m_warehouse d','a.m_warehouse_id=d.m_warehouse_id', 'left');
 		$this->db->select(
 				'a.m_employee_id,
 				a.m_employee_full_name,
@@ -142,6 +142,10 @@ class m_employee_controller extends CI_Controller {
 
 		$this->db->trans_start(); // Query will be rolled back
 		$this->db->trans_begin();
+
+		if($m_warehouse_id==''){
+			$m_warehouse_id=null;
+		}
 		
 		$data = array(
 			"m_employee_id"=>$code,

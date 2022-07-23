@@ -162,12 +162,8 @@
                                     <button type="submit" class="btn btn-primary btn-sm" name="btn_print">
                                         <i class="fa fa-print"></i> Print
                                     </button>    
-                                    <button type="submit" class="btn btn-primary btn-sm" name="btn_download">
-                                        <i class="fa fa-download"></i> Download
-                                    </button>    
                                 </div>
                             </div>
-
                             <div id = "report_area_content">
                             </div>
                             <hr>
@@ -242,7 +238,6 @@
 
         $('#report_filter_area_content').load("<?php echo $path; ?>"+"/template?aksi=filter_report&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>");
 
-        table_display();
     }
 
     function display_report() {

@@ -21,7 +21,6 @@
                     <tr>
                         <th class="all">No</th>
                         <th class="all">Name</th>
-                        <th>Manager</th>
                         <th>Status</th>
                         <th class="all">Action</th>
                     </tr>
@@ -46,19 +45,17 @@
                                     return data;
                                 }
                             },
-                            { "data": "m_position_top_manager", "render": function (data, type, row, meta) {
-                                    return data;
-                                }
-                            },
                             { "data": "m_position_status", "render": function (data, type, row, meta) {
                                     return data;
                                 }
                             },
                             {  "data": "aksi", className: 'text-nowrap', "render": function (data, type, row, meta) {
                                     var id = row.m_position_id;
+                                    var name = row.m_position_name;
+
                                     var edit = "<button type='button' class='btn btn-primary btn-sm' onclick=\"edit_display('" + id + "')\"><i class='fa fa-edit'></i> </button> ";
                                     var hapus = "<button type='button' class='btn btn-danger btn-sm' onclick=\"send_delete_data('" + id + "')\"><i class='fa fa-trash'></i> </button> ";
-                                    return edit + hapus;
+                                    return name!="Owner"?(edit + hapus):"";
                                 }
                             },
                         ],
@@ -108,13 +105,9 @@
 
         $m_position_id = $count==0?"":$item['m_position_id'];
         $m_position_name = $count==0?"":$item['m_position_name'];
-        $m_position_top_manager = $count==0?"":$item['m_position_top_manager'];
         $m_position_status = $count==0?"Active":$item['m_position_status'];
         $read_only = false;
 
-        $count = count($data['list_m_position_top_manager']);
-        $list_m_position_top_manager = $count==0?"":$data['list_m_position_top_manager'];
-        
         if($count>0){
             $m_position_status = $m_position_status=="Active"?true:false;
             $read_only = $m_position_status==true?false:true;
@@ -123,7 +116,6 @@
         $input =  
             get_input("m_position_id","Id","hidden",true,$m_position_id)
             .get_group_input("m_position_name","Name","text",50,true,$m_position_name,$read_only)
-            .get_group_select2("m_position_top_manager","Manager",true,$list_m_position_top_manager,$m_position_top_manager,$read_only)
             .get_group_toggle("m_position_status","Status",true,$m_position_status,$read_only)
             ;
         echo $input;

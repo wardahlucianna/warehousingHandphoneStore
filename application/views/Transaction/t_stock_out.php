@@ -20,6 +20,7 @@
     function table_master($path){
         $input_kiri =  
             get_group_input_full("date","Date","text",50,true,"")
+            .get_input("date_format","Date","hidden",50,true,"")
         ;
         ?>
 
@@ -44,13 +45,24 @@
             <script type="text/javascript">
 
                 $(document).ready(function(){
+                    var formattedDate = new Date();
+                    var d = formattedDate.getDate();
+                    var m =  formattedDate.getMonth();
+                    m += 1;  // JavaScript months are 0-11
+                    var y = formattedDate.getFullYear();
+                    $("#date_format").val(y+"/"+m+"/"+d)
+
                     $('#date').datetimepicker({
                         format: 'L',
                         defaultDate: new Date(),
                         format: 'MMMM YYYY'
-                     });
-
-                    $("#date").on('dp.change',function(e) {
+                    }).on('dp.change',function(e) {
+                        var formattedDate = new Date(e.date);
+                        var d = formattedDate.getDate();
+                        var m =  formattedDate.getMonth();
+                        m += 1;  // JavaScript months are 0-11
+                        var y = formattedDate.getFullYear();
+                        $("#date_format").val(y+"/"+m+"/"+d)
                         $('#master_table').DataTable().ajax.reload()
                     });
 
@@ -95,7 +107,7 @@
                             data_new.length = data.length;
                             data_new.search = data.search["value"];
                             data_new.sort = sort;
-                            data_new.date = $("#date").val();
+                            data_new.date = $("#date_format").val();
                             var path = "<?php echo $path.'/data_table'?>"
 
                             $.ajax({
@@ -166,7 +178,7 @@
                         <td>
                             <?php 
                                 echo get_single_input("m_product_id","Product","hidden","15",true,"",true) ;
-                                echo get_single_input("m_product_name","Product","text","15",true,"",true) ;
+                                echo get_single_input("m_product_name","Product","text","15",false,"",true) ;
                             ?>
                                 
                         </td>
@@ -218,6 +230,10 @@
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
 
+            $('#m_shop_id').on('change', function () {
+                $('#imei').val('').focus();
+
+            });
 
             $("#insert_button").attr("Onclick", "summery_model()");
 
@@ -228,8 +244,6 @@
                 date_string = dateNow.getDate() + " " + months[dateNow.getMonth()] + " " + dateNow.getFullYear() + " " + dateNow.toLocaleTimeString();
                 $('#date_input').val(date_string)
             }
-
-           
 
             function summery_model(){
                 if(ArrInputTransaction.length==0){
@@ -385,9 +399,10 @@
                     "aksi": "",
                 }
 
-                if($('#m_product_name').val()==""){
-                    msg_warning("Sorry, Imei is not exsis");
-                }
+                // if($('#m_product_name').val()==""){
+                //     msg_warning("Sorry, Imei is not exsis");
+                //     $('#imei').val('');
+                // }
                 
                 if(invalid==false){
                     $('#imei').val('').focus();
@@ -409,6 +424,7 @@
                         if(result.data!=null){
                             if(indexOfObject>=0){
                                 msg_warning("Sorry, Imei "+ObjInputTransaction.imei+" already exsis in this entry");
+                                $('#imei').val('');
                             }
                             else if(result.data.t_imei_status=="Ready"){
                                 if(ArrInputTransaction.length<50){
@@ -417,16 +433,19 @@
                                 }
                                 else{
                                     msg_warning("Sorry, rows are full. please save than create new transaction");
+                                    send_reset_input()
                                 }
 
                                 $("#data_imei").val(JSON.stringify(ArrInputTransaction));
                             }
                             else if(result.data.t_imei_status=="Sold"){
                                 msg_warning("Sorry, Imei "+ObjInputTransaction.imei+" is sold");
+                                $('#imei').val('');
                             }
                         }
                         else{
                             msg_warning("Sorry, Imei is not exsis");
+                            $('#imei').val('');
                         }
                         // clearTimeout(myInterval);
                     }).fail(function (xhr, status, error) {
@@ -488,6 +507,7 @@
                 <thead>
                     <tr>
                         <th class="all">No</th>
+                        <th class="all">Shop</th>
                         <th class="all">Product</th>
                         <th>Imei</th>
                         <th class="all">Action</th>
@@ -509,6 +529,11 @@
                         "data": "m_product_name", "render": function (data, type, row, meta) {
                             no = meta.row + meta.settings._iDisplayStart + 1;
                             return no;
+                        }
+                    },
+                    {   targets: "no-sort",
+                        "data": "m_shop_name", "render": function (data, type, row, meta) {
+                            return data;
                         }
                     },
                     {   targets: "no-sort",

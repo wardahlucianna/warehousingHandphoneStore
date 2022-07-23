@@ -24,8 +24,11 @@
         $count = count($data['list_m_warehouse']);
         $list_m_warehouse = $count==0?"":$data['list_m_warehouse'];
         $m_warehouse_id = "";
-        $read_only = false;
         $input_warehouse = "";
+        $read_only = false;
+
+        $count = count($data['list_m_shop']);
+        $list_m_shop = $count==0?"":$data['list_m_shop'];
 
         if($_SESSION['employee_position_name']!="Owner"){
             $m_warehouse_id = $_SESSION['m_warehouse_id'];
@@ -38,6 +41,7 @@
 
         $input =  
             $input_warehouse
+            .get_group_select2("m_shop_id","Shop",false,$list_m_shop)
             .get_group_input("date_range","Date","text",50,true,"")
             .get_input("start_date_format","Date","hidden",50,true,"")
             .get_input("end_date_format","Date","hidden",50,true,"")
@@ -71,6 +75,7 @@
 
     function report($data,$aksi,$path){
         $m_warehouse_id = $data['m_warehouse_id'];
+        $m_shop_id = $data['m_shop_id'];
         $start_date = $data['start_date'];
         $end_date = $data['end_date'];
         $date_range = $data['date_range'];
@@ -79,6 +84,7 @@
 
         $input =  
             get_input("m_warehouse_id","m_warehouse_id","hidden",true,$m_warehouse_id)
+            .get_input("m_shope_id","m_shope_id","hidden",true,$m_shop_id)
             .get_input("start_date","start_date","hidden",true,$start_date)
             .get_input("end_date","end_date","hidden",true,$end_date)
             .get_group_input("start_date_format","Date","text",50,true,$date_range,true)
@@ -92,6 +98,7 @@
                     <tr>
                         <th class="all">No</th>
                         <th>Date</th>
+                        <th >Shop</th>
                         <th>Product Type</th>
                         <th>Size</th>
                         <th>Color</th>
@@ -110,12 +117,16 @@
                             "infoFiltered": " (filtered from _MAX_ total entries)"
                         },
                         columns: [
-                            { "data": "t_income_goods_entry_id", "render": function (data, type, row, meta) {
+                            { "data": "t_outcome_goods_entry_id", "render": function (data, type, row, meta) {
                                     no = meta.row + meta.settings._iDisplayStart + 1;
                                     return no;
                                 }
                             },
                             { "data": "create_at", "render": function (data, type, row, meta) {
+                                    return data;
+                                }
+                            },
+                            { "data": "m_shop_name", "render": function (data, type, row, meta) {
                                     return data;
                                 }
                             },
@@ -162,6 +173,7 @@
                             data_new.m_warehouse_id = $('#m_warehouse_id').val();
                             data_new.start_date = $('#start_date').val();
                             data_new.end_date = $('#end_date').val();
+                            data_new.m_shop_id = $('#m_shop_id').val();
                             var path = "<?php echo $path.'/data_table'?>"
 
                             $.ajax({

@@ -84,7 +84,7 @@ class t_stock_in_controller extends CI_Controller {
 				'DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at,
 				a.t_income_goods_entry_code,
 				b.m_employee_full_name');
-		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where("DATE_FORMAT(a.create_at, '%M %Y')=DATE_FORMAT('".$date."', '%M %Y' )" );
 		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 
 		$result['row_total']	= count($this->db->get()->result());
@@ -97,7 +97,7 @@ class t_stock_in_controller extends CI_Controller {
 				'DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at,
 				a.t_income_goods_entry_code,
 				b.m_employee_full_name');
-		$this->db->where('DATE_FORMAT(a.create_at, "%M %Y")=',$date);
+		$this->db->where("DATE_FORMAT(a.create_at, '%M %Y')=DATE_FORMAT('".$date."', '%M %Y' )" );
 		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
 		$this->db->limit($length,$start);
 		
@@ -217,7 +217,7 @@ class t_stock_in_controller extends CI_Controller {
 				"t_imei_id"=>$last_id_imei,
 				"create_at"=>date("Y-m-d H:i:s"),
 				"create_by"=>$_SESSION['employee_code'],
-				"hs_imei_status"=>"Income warehouse from". $get_warehouse->m_warehouse_name,
+				"hs_imei_status"=>"Income warehouse from ". $get_warehouse->m_warehouse_name,
 			);
 			$this->db->insert('hs_imei', $data_history);
 

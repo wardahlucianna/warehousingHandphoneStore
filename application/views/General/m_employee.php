@@ -239,11 +239,26 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
+                display_warehouse()
+
                 $('#m_feature_squance').attr('min',1)
                 $('#m_feature_squance').keyup(function() {
                     var value = $(this).val();
                     value = value<1 ? $(this).val(1) : $(this).val(value);
                 })
+
+                $('#m_position_id').change(function() {
+                    display_warehouse()
+                })
+
+                function display_warehouse(){
+                    if($('#m_position_id').select2('data')[0].text=="Owner"){
+                        $('#m_warehouse_id_content').hide();
+                    }
+                    else{
+                        $('#m_warehouse_id_content').show();   
+                    }
+                }
             })
         </script>
                     

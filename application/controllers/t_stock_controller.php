@@ -40,6 +40,13 @@ class t_stock_controller extends CI_Controller {
 		$data['aksi'] = $aksi;
 		$data['data'] = array();
 		$data['path'] = str_replace("/template","",current_url());
+
+		$this->db->from('m_warehouse');
+		$this->db->where('m_warehouse_status', 'Active');
+		$this->db->select('m_warehouse_id, m_warehouse_name');
+		$this->db->order_by('m_warehouse_name');
+		$get= $this->db->get();
+		$data['data']['list_m_warehouse']= $get->result();
 		
 		$result['data'] = json_encode($data);
 		$this->load->view($group_title.'/'.$file_title,$result);
@@ -51,16 +58,17 @@ class t_stock_controller extends CI_Controller {
 		$length 		= $this->input->post('length');
 		$search 		= $this->input->post('search');
 		$sort 		= $this->input->post('sort');
+		$m_warehouse_id = $this->input->post('m_warehouse_id');
 
 		$this->db->from('t_stock a');
 		$this->db->join('m_product b', 'a.m_product_id=b.m_product_id');
-		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
+		$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
 		$result['row_total']	= count($this->db->get()->result());
 		$result['row_filter'] 	= $result['row_total'];
 
 		$this->db->from('t_stock a');
 		$this->db->join('m_product b', 'a.m_product_id=b.m_product_id');
-		$this->db->where('a.m_warehouse_id=',$_SESSION['m_warehouse_id']);
+		$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {

@@ -23,7 +23,7 @@ class s_login_controller extends CI_Controller {
 		$password_def = base64_encode('000000');
 		
 		$this->db->from('m_employee a');
-		$this->db->from('m_position b', 'a.m_employee_id=b.m_employee_id');
+		$this->db->join('m_position b', 'a.m_position_id=b.m_position_id');
 		$this->db->where("m_employee_status","Active");
 		$this->db->where("m_employee_username",$username);
 		$this->db->where("m_employee_password",$password);

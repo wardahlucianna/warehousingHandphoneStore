@@ -16,6 +16,7 @@
     function table_master($path){
         $input_kiri =  
             get_group_input_full("date","Date","text",50,true,"")
+            .get_input("date_format","Date","hidden",50,true,"")
         ;
         ?>
 
@@ -41,14 +42,26 @@
 
             <script type="text/javascript">
                 $(document).ready(function(){
+                    var formattedDate = new Date();
+                    var d = formattedDate.getDate();
+                    var m =  formattedDate.getMonth();
+                    m += 1;  // JavaScript months are 0-11
+                    var y = formattedDate.getFullYear();
+                    $("#date_format").val(y+"/"+m+"/"+d)
+
                     $('#date').datetimepicker({
                         format: 'L',
                         defaultDate: new Date(),
                         format: 'MMMM YYYY'
-                     });
-
-                    $("#date").on('dp.change',function(e) {
+                    }).on('dp.change',function(e) {
+                        var formattedDate = new Date(e.date);
+                        var d = formattedDate.getDate();
+                        var m =  formattedDate.getMonth();
+                        m += 1;  // JavaScript months are 0-11
+                        var y = formattedDate.getFullYear();
+                        $("#date_format").val(y+"/"+m+"/"+d)
                         $('#master_table').DataTable().ajax.reload()
+                        
                     });
 
                     $("#master_table").dataTable({
@@ -102,7 +115,7 @@
                             data_new.length = data.length;
                             data_new.search = data.search["value"];
                             data_new.sort = sort;
-                            data_new.date = $("#date").val();
+                            data_new.date = $("#date_format").val();
                             var path = "<?php echo $path.'/data_table'?>"
 
                             $.ajax({
@@ -247,7 +260,8 @@
                             }
                             else{
                                 $('#t_product_name_return').val('')
-                                msg_warning("Sorry, "+$('#m_shop_id').select2('data')[0].text+" didn't buy this imei"+$('#imei_return').val());
+                                msg_warning("Sorry, "+$('#m_shop_id').select2('data')[0].text+" didn't buy this imei "+$('#imei_return').val());
+                                $("#imei_return").val('');
                             }
                         }).fail(function (xhr, status, error) {
                             msg_warning("process failed","")
@@ -273,6 +287,7 @@
                             else{
                                  $('#t_product_name_replacement').val('')
                                  msg_warning("Sorry, Imei replacement is not exsis");
+                                 $("#imei_replacement").val('');
                             }
                         }).fail(function (xhr, status, error) {
                             msg_warning("process failed","")
