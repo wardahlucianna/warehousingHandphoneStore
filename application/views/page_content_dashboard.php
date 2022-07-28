@@ -88,7 +88,7 @@
         </div> <!-- container -->
     </div> <!-- content -->
     <footer class="footer text-right">
-        2019 © PT. Mitra Cakrawala International
+        2022 © Dmax asia
     </footer>
 
 </div>

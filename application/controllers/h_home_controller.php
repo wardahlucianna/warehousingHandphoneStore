@@ -9,8 +9,6 @@ class h_home_controller extends CI_Controller {
 		$this->load->model('m_menu');
 		session_start();
 		date_default_timezone_set("Asia/Jakarta");
-
-		
 	}	
 
 	public function index()

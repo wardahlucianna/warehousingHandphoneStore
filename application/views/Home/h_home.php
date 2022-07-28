@@ -160,7 +160,7 @@
                                     return no;
                                 }
                             },
-                            { "data": "m_product_name", "render": function (data, type, row, meta) {
+                            { "data": "m_product_type_name", "render": function (data, type, row, meta) {
                                     return data;
                                 }
                             },
