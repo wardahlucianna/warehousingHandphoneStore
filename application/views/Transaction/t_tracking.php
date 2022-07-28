@@ -54,11 +54,11 @@
                         },
                         stateSave: true,
                         searching: false,
-                        "bPaginate": false,
+                        // "bPaginate": false,
                         "bLengthChange": false,
-                        "bFilter": true,
-                        "bInfo": false,
-                        "bAutoWidth": false,
+                        // "bFilter": true,
+                        // "bInfo": false,
+                        // "bAutoWidth": false,
                         columns: [
                             { "data": "create_at", "render": function (data, type, row, meta) {
                                     return data;

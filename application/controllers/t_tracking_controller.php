@@ -64,6 +64,7 @@ class t_tracking_controller extends CI_Controller {
 		$this->db->join('t_imei b', 'a.t_imei_id=b.t_imei_id');
 		$this->db->where('t_imei_number', $imei);
 		$this->db->select('DATE_FORMAT(a.create_at, "%d %M %Y %h:%i %p") as create_at, a.hs_imei_status');
+		$this->db->order_by('a.create_at desc');
 
 		$result['data'] = $this->db->get()->result();
 

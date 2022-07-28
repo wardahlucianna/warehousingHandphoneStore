@@ -63,12 +63,14 @@ class t_stock_controller extends CI_Controller {
 		$this->db->from('t_stock a');
 		$this->db->join('m_product b', 'a.m_product_id=b.m_product_id');
 		$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
+		$this->db->where('b.m_product_status=','Active');
 		$result['row_total']	= count($this->db->get()->result());
 		$result['row_filter'] 	= $result['row_total'];
 
 		$this->db->from('t_stock a');
 		$this->db->join('m_product b', 'a.m_product_id=b.m_product_id');
 		$this->db->where('a.m_warehouse_id=',$m_warehouse_id);
+		$this->db->where('b.m_product_status=','Active');
 		$this->db->limit($length,$start);
 		
 		foreach ($sort as $key => $value) {

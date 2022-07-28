@@ -56,3 +56,4 @@
 <!-- datetime range picker -->
 <script type="text/javascript" src="<?php echo base_url().'assets/vendor/bootstrap-daterangepicker/js/daterangepicker.js'?>"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/vendor/bootstrap-daterangepicker/css/daterangepicker.css'?>" rel="stylesheet">
+

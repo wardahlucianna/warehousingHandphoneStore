@@ -190,7 +190,6 @@
 
 <script type="text/javascript">
     table_display();
-
     function table_display() {
         reset_form()
         $("#table_area").css("display", "block");
@@ -201,6 +200,18 @@
         $("#detail_area").css("display", "none");
         
         $('#table_area_content').load("<?php echo $path; ?>"+"/template?aksi=table_master&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>");
+    }
+
+    function dashboard_display() {
+        reset_form()
+        $("#table_area").css("display", "none");
+        $("#insert_area").css("display", "none");
+        $("#edit_area").css("display", "none");
+        $("#report_filter_area").css("display", "none");
+        $("#report_area").css("display", "none");
+        $("#detail_area").css("display", "none");
+        
+        //$('#table_area_content').load("<?php echo $path; ?>"+"/template?aksi=table_master&group_title=<?php echo $group_title; ?>&file_title=<?php echo $file_title; ?>");
     }
 
     function insert_display() {
